@@ -6,7 +6,7 @@
 #    By: tatahere <tatahere@student.42barcelon      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/31 09:52:48 by tatahere          #+#    #+#              #
-#    Updated: 2026/02/14 22:05:52 by tatahere         ###   ########.fr        #
+#    Updated: 2026/02/14 23:05:36 by tatahere         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,10 +28,10 @@ CXXFLAGS	+=	$(CINC)
 CDEBUG		:=	-g
 CXXFLAGS	+=	$(CDEBUG)
 
-NAME	=	RPN
+NAME	=	btc
 
 OBJ		:=	main.o				\
-			RPN.o				\
+			BitcoinExchange.o	\
 
 OBJ		:=	$(addprefix $(BIN_DIR), $(OBJ))
 
