@@ -57,6 +57,8 @@ unsigned long	PmergeMe::stoul(std::string str)
 		if (errno == ERANGE)
 			throw (std::invalid_argument("Error"));
 	}
+	if (str.find('-') != std::string::npos)
+		throw (std::invalid_argument("Error"));
 	return (val);
 }
 
@@ -73,8 +75,8 @@ PmergeMe::PmergeMe(int ac, char **av)
 	this->_sortedContainer = this->_unsortedContainer;
 	std::sort(this->_sortedContainer.begin(), this->_sortedContainer.end());
 
-	std::cout << "Before: " << this->_unsortedContainer << std::endl;
-	std::cout << "After: " << this->_sortedContainer << std::endl;
+	std::cout << "Before:\t" << this->_unsortedContainer << std::endl;
+	std::cout << "After:\t" << this->_sortedContainer << std::endl;
 
 //	this->_vectorContainer = std::vector<unsigned long>(this);
 }
