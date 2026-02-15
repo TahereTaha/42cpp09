@@ -6,17 +6,19 @@
 
 class PmergeMe
 {
+	//	domain data.
+	private:
+		std::vector<unsigned long>	_intactContainer;
+		std::vector<unsigned long>	_sortedContainer;
+		std::vector<unsigned long>	_vectorContainer;
+		std::list<unsigned long>	_listContainer;
+	
 	//	some helper functions.
 	private:
 		static unsigned long	stoul(std::string str);
 
 	//	some internal methods.
 	private:
-		std::vector<unsigned long>	_intactContainer;
-		std::vector<unsigned long>	_sortedContainer;
-		std::vector<unsigned long>	_vectorContainer;
-		std::list<unsigned long>		_listContainer;
-
 		void	sortVectorContainer(void);
 		void	sortListContainer(void);
 

@@ -1,10 +1,14 @@
 #include "PmergeMe.hpp"
 
-#include <cctype>
 #include <iostream>
 #include <string>
-#include <stack>
 #include <stdexcept>
+
+#include <cctype>
+#include <cstdlib>
+#include <climits>
+#include <cerrno>
+#include <cstring>
 
 //	canonical orthodox form.
 PmergeMe::PmergeMe(void)
@@ -32,15 +36,47 @@ PmergeMe::~PmergeMe(void)
 {
 }
 
+//	some helper functions.
+
+unsigned long	PmergeMe::stoul(std::string str)
+{
+	const char	*c_str = str.c_str();
+	char		*end_ptr;
+
+	unsigned long	val = std::strtoul(c_str, &end_ptr, 10);
+	if (*end_ptr != '\0')
+		throw (std::invalid_argument("Error"));
+	if (val == 0)
+	{
+		if(std::strpbrk(c_str, "0123456789") > end_ptr)
+			throw (std::invalid_argument("Error"));
+	}
+	if (val == ULONG_MAX)
+	{
+		if (errno == ERANGE)
+			throw (std::invalid_argument("Error"));
+	}
+	return (val);
+}
+
 //	constructors.
 
 PmergeMe::PmergeMe(int ac, char **av)
 {
 	std::cout << "seting up the merge insertion sort." << std::endl;
+	
 	(void) ac;
 	(void) av;
 
+	size_t	i = 1;
+	while (i < (size_t)ac)
+	{
+		(void) PmergeMe::stoul(av[i]);
+		i++;
+	}
 }
+
+//	internal methods.
 
 //	methods.
 
