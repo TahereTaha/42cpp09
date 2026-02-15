@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <algorithm>
 
 #include <cctype>
 #include <cstdlib>
@@ -24,7 +25,7 @@ PmergeMe & PmergeMe::operator = (const PmergeMe & src)
 {
 	if (this != &src)
 	{
-		this->_intactContainer = src._intactContainer;
+		this->_unsortedContainer = src._unsortedContainer;
 		this->_sortedContainer = src._sortedContainer;
 		this->_vectorContainer = src._vectorContainer;
 		this->_listContainer = src._listContainer;
@@ -63,17 +64,19 @@ unsigned long	PmergeMe::stoul(std::string str)
 
 PmergeMe::PmergeMe(int ac, char **av)
 {
-	std::cout << "seting up the merge insertion sort." << std::endl;
-	
-	(void) ac;
-	(void) av;
-
 	size_t	i = 1;
 	while (i < (size_t)ac)
 	{
-		(void) PmergeMe::stoul(av[i]);
+		this->_unsortedContainer.push_back(PmergeMe::stoul(av[i]));
 		i++;
 	}
+	this->_sortedContainer = this->_unsortedContainer;
+	std::sort(this->_sortedContainer.begin(), this->_sortedContainer.end());
+
+	std::cout << "Before: " << this->_unsortedContainer << std::endl;
+	std::cout << "After: " << this->_sortedContainer << std::endl;
+
+//	this->_vectorContainer = std::vector<unsigned long>(this);
 }
 
 //	internal methods.

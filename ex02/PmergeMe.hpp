@@ -3,12 +3,13 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <iostream>
 
 class PmergeMe
 {
 	//	domain data.
 	private:
-		std::vector<unsigned long>	_intactContainer;
+		std::vector<unsigned long>	_unsortedContainer;
 		std::vector<unsigned long>	_sortedContainer;
 		std::vector<unsigned long>	_vectorContainer;
 		std::list<unsigned long>	_listContainer;
@@ -37,9 +38,47 @@ class PmergeMe
 		void run(void);
 };
 
+//	stream insertion operator overloading for vector.
+template <typename T>
+std::ostream & operator << (std::ostream & out_s, const std::vector<T>& obj)
+{
+	size_t	i = 0;
+
+	while (i < obj.size())
+	{
+		std::cout << obj[i];
+		i++;
+		if (i < obj.size())
+			std::cout << " ";
+	}
+
+	return (out_s);
+}
+
+//	stream insertion operator overloading for list.
+template <typename T>
+std::ostream & operator << (std::ostream & out_s, const std::list<T>& obj)
+{
+	typename std::list<T>::iterator	iter = obj.begin();
+	typename std::list<T>::iterator	end = obj.end();
+
+	while (iter != end)
+	{
+		std::cout << *iter;
+		iter++;
+		if (iter != end)
+			std::cout << " ";
+	}
+
+	return (out_s);
+}
+
+
+
 //	todo list:
-//	- [ ] make the stoul.
-//	- [ ] parse the imput.
+//	- [x] make the stoul.
+//	- [x] make the stream insertion operator for the vector and list.
+//	- [x] parse the imput.
 //	- [ ] set up some internal values.
 //	- [ ] write the algorithm.
 //	- [ ] time the algorithm.
