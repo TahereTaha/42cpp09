@@ -19,6 +19,7 @@ class BitcoinExchange
 
 		//	some internal methods.
 		void	initDB(void);
+		double	getValueOnDate(time_t date);
 	public:
 
 		BitcoinExchange(void);
@@ -50,7 +51,7 @@ std::ostream & operator << (std::ostream & out_s, const Time_t & obj);
 //	- [x] prase floats.
 //	- [x] parse dates.
 //	- [x] print dates.
-//	- [ ] parse and store the database.
-//	- [ ] make some acces methods.
+//	- [x] parse and store the database.
+//	- [x] make some acces methods.
 //	- [ ] go throug the data display it.
 

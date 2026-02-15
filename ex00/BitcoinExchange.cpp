@@ -98,7 +98,23 @@ void	BitcoinExchange::initDB(void)
 	}
 }
 
-
+//	return the the exact one or the imidiate inferior to this one.
+double	BitcoinExchange::getValueOnDate(time_t date)
+{
+	if (this->_db.begin()->first > date)
+		throw (std::invalid_argument("no record for this time."));
+	std::map<time_t, double>::iterator best_match = this->_db.begin();
+	std::map<time_t, double>::iterator iter = this->_db.begin();
+	std::map<time_t, double>::iterator end = this->_db.end();
+	while (iter != end)
+	{
+		if (iter->first <= date)
+			best_match = iter;
+		iter++;
+	}
+	std::cout << "best match is: " << Time_t(best_match->first) << std::endl;
+	return (best_match->second);
+}
 
 //	helper functions.
 
