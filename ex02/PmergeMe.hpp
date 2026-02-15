@@ -17,6 +17,7 @@ class PmergeMe
 	//	some helper functions.
 	private:
 		static unsigned long	stoul(std::string str);
+		static unsigned long	jacob_seq(unsigned long n);
 
 	//	some internal methods.
 	private:
@@ -59,8 +60,8 @@ std::ostream & operator << (std::ostream & out_s, const std::vector<T>& obj)
 template <typename T>
 std::ostream & operator << (std::ostream & out_s, const std::list<T>& obj)
 {
-	typename std::list<T>::iterator	iter = obj.begin();
-	typename std::list<T>::iterator	end = obj.end();
+	typename std::list<T>::const_iterator	iter = obj.begin();
+	typename std::list<T>::const_iterator	end = obj.end();
 
 	while (iter != end)
 	{
@@ -79,8 +80,10 @@ std::ostream & operator << (std::ostream & out_s, const std::list<T>& obj)
 //	- [x] make the stoul.
 //	- [x] make the stream insertion operator for the vector and list.
 //	- [x] parse the imput.
-//	- [ ] set up some internal values.
-//	- [ ] write the algorithm.
+//	- [x] set up some internal values.
+//	- [ ] make a function that returns the Jacobsthal sequence.
+//	- [ ] write the algorithm for the vector.
+//	- [ ] write the algorithm for the list.
 //	- [ ] time the algorithm.
 //	- [ ] print all of this to terminal.
 

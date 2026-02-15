@@ -62,6 +62,29 @@ unsigned long	PmergeMe::stoul(std::string str)
 	return (val);
 }
 
+
+//	succession is: preciding + 2 * second_preciding
+unsigned long	PmergeMe::jacob_seq(unsigned long n)
+{
+	if (n == 0)
+		return (0);
+	if (n == 1)
+		return (1);
+	
+	unsigned long	second_preciding = 0;
+	unsigned long	preciding = 1;
+	unsigned long	current = preciding + 2 * second_preciding;
+	n -= 2;
+	while (n != 0)
+	{
+		second_preciding = preciding;
+		preciding = current;
+		current = preciding + 2 * second_preciding;
+		n--;
+	}
+	return (current);
+}
+
 //	constructors.
 
 PmergeMe::PmergeMe(int ac, char **av)
@@ -78,15 +101,39 @@ PmergeMe::PmergeMe(int ac, char **av)
 	std::cout << "Before:\t" << this->_unsortedContainer << std::endl;
 	std::cout << "After:\t" << this->_sortedContainer << std::endl;
 
-//	this->_vectorContainer = std::vector<unsigned long>(this);
+	this->_vectorContainer = \
+		std::vector<unsigned long>(this->_unsortedContainer.begin(), this->_unsortedContainer.end());
+	this->_listContainer = \
+		std::list<unsigned long>(this->_unsortedContainer.begin(), this->_unsortedContainer.end());
+
+//	std::cout << "my vector container:\t" << this->_vectorContainer << std::endl;
+//	std::cout << "my list container:\t" << this->_listContainer << std::endl;
 }
 
 //	internal methods.
+
+void	PmergeMe::sortVectorContainer(void)
+{
+	std::cout << "\ndoing the shorting of the vector.\n" << std::endl;
+//	std::cout << "testing the jacobs sequense: " << std::endl;
+//	size_t	i = 0;
+//	while (i < 100)
+//	{
+//		std::cout << PmergeMe::jacob_seq(i) << std::endl;
+//		i++;
+//	}
+//	std::cout << std::endl;
+}
 
 //	methods.
 
 void	PmergeMe::run(void)
 {
-	std::cout << "runing the thing." << std::endl;
+	std::cout << "\n//\truning the thing." << std::endl;
+
+	this->sortVectorContainer();
+
+	std::cout << "the correct one is:\t\t" << this->_sortedContainer << std::endl;
+	std::cout << "the result of the vector is:\t" << this->_vectorContainer << std::endl;
 }
 
