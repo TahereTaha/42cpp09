@@ -112,11 +112,69 @@ double	BitcoinExchange::getValueOnDate(time_t date)
 			best_match = iter;
 		iter++;
 	}
-	std::cout << "best match is: " << Time_t(best_match->first) << std::endl;
 	return (best_match->second);
 }
 
+//	methods.
+
+void	BitcoinExchange::prossesFile(std::string file_name)
+{
+	std::ifstream	file(file_name.c_str());
+	std::string		line;
+	std::getline(file, line);
+	if (line != "date | value")
+	{
+		std::cout << "Error: malformed input file." << std::endl;
+		std::cout << "line 1 should start with:" << std::endl;
+		std::cout << "\tdate | value" << std::endl;
+		return ;
+	}
+	while (std::getline(file, line))
+	{
+		try
+		{
+			if (line.find('|') == std::string::npos)
+				throw (std::invalid_argument("malformed record."));
+			std::string	date_str = trim(line.substr(0, line.find('|')));
+			line = line.substr(line.find('|') + 1);
+			if (line.find('|') != std::string::npos)
+				throw (std::invalid_argument("malformed record."));
+			std::string	amount_str = trim(line);
+
+			time_t		date = BitcoinExchange::stodate(date_str);
+			double		amount = BitcoinExchange::stod(amount_str);
+			if (amount < 0)
+				throw (std::invalid_argument("not a positive number."));
+			if (amount > 1000)
+				throw (std::invalid_argument("too large number."));
+
+			double		value = amount * this->getValueOnDate(date);
+			std::cout << Time_t(date) << " => " << amount << " = " << value << std::endl;
+		}
+		catch (std::exception &e)
+		{
+			std::cout << "Error: " << e.what() << std::endl;
+		}
+	}
+}
+
+
 //	helper functions.
+
+std::string	BitcoinExchange::trim(std::string str)
+{
+	size_t	start = 0;
+	size_t	end = str.size();
+	while (start < end && std::isspace(str[start]))
+	{
+		start++;
+	}
+	while (end > start && std::isspace(str[end - 1]))
+	{
+		end--;
+	}
+	return (str.substr(start, end - start));
+}
 
 //on error will throw an exeption.
 long	BitcoinExchange::stol(std::string str)

@@ -13,6 +13,7 @@ class BitcoinExchange
 	public:		//	to be remobed after.
 
 		//	some helper functions.
+		static std::string	trim(std::string str);
 		static long		stol(std::string str);
 		static double	stod(std::string str);
 		static time_t	stodate(std::string str);
@@ -27,7 +28,7 @@ class BitcoinExchange
 		~BitcoinExchange(void);
 		BitcoinExchange & operator = (const BitcoinExchange & src);
 
-//		prossesFile(std::string input_file);
+		void	prossesFile(std::string file_name);
 };
 
 //	thin wraper of the type of time_t

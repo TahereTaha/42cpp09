@@ -13,13 +13,11 @@ int	main(int ac, char **av)
 	try
 	{
 		BitcoinExchange	btc;
-		std::cout	<< "the value is: " 
-					<< btc.getValueOnDate(BitcoinExchange::stodate("2022-03-28")) 
-					<< std::endl;
+		btc.prossesFile(av[1]);
 	}
 	catch (std::exception &e)
 	{
-		std::cout << "error catched of: " << e.what() << std::endl;
+		std::cout << "Error: " << e.what() << std::endl;
 	}
 	return (0);
 }
