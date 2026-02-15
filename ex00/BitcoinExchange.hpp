@@ -8,7 +8,7 @@
 class BitcoinExchange
 {
 	private:
-//		std::map<>	_db;
+		std::map<time_t, double>	_db;
 
 	public:		//	to be remobed after.
 
@@ -18,13 +18,15 @@ class BitcoinExchange
 		static time_t	stodate(std::string str);
 
 		//	some internal methods.
-//		void	initDB(void);
+		void	initDB(void);
 	public:
 
 		BitcoinExchange(void);
 		BitcoinExchange(const BitcoinExchange & src);
 		~BitcoinExchange(void);
 		BitcoinExchange & operator = (const BitcoinExchange & src);
+
+//		prossesFile(std::string input_file);
 };
 
 //	thin wraper of the type of time_t
@@ -47,7 +49,7 @@ std::ostream & operator << (std::ostream & out_s, const Time_t & obj);
 //	- [x] parse longs.
 //	- [x] prase floats.
 //	- [x] parse dates.
-//	- [ ] print dates.
+//	- [x] print dates.
 //	- [ ] parse and store the database.
 //	- [ ] make some acces methods.
 //	- [ ] go throug the data display it.

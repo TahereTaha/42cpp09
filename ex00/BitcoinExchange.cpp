@@ -3,6 +3,7 @@
 #include <string>
 #include <stdexcept>
 #include <iostream>
+#include <fstream>
 
 #include <cerrno>
 #include <climits>
@@ -16,6 +17,7 @@
 BitcoinExchange::BitcoinExchange(void)
 {
 //	std::cout << "BitcoinExchange default constructor." << std::endl;
+	this->initDB();
 }
 
 BitcoinExchange::BitcoinExchange(const BitcoinExchange & src)
@@ -29,7 +31,7 @@ BitcoinExchange & BitcoinExchange::operator = (const BitcoinExchange & src)
 //	std::cout << "BitcoinExchange copy assigment." << std::endl;
 	if (this != &src)
 	{
-		//	something.
+		this->_db = src._db;
 	}
 	return (*this);
 }
@@ -61,12 +63,41 @@ Time_t::Time_t(time_t val)
 	this->_val = val;
 }
 
-//	constructor.
-//
-//void	BitcoinExchange::initDB(void)
-//{
-//	
-//}
+//	internal methods.
+
+void	BitcoinExchange::initDB(void)
+{
+	std::ifstream	db_file("data.csv");
+	std::string		line;
+	std::getline(db_file, line);
+	if (line != "date,exchange_rate")
+		throw (std::invalid_argument("malformed database"));
+	size_t	i = 2;
+	while (std::getline(db_file, line))
+	{
+		try
+		{
+			if (line.find(',') == std::string::npos)
+				throw (std::invalid_argument("malformed record"));
+			std::string	date_str = line.substr(0, line.find(','));
+			line = line.substr(line.find(',') + 1);
+			if (line.find(',') != std::string::npos)
+				throw (std::invalid_argument("malformed record"));
+			std::string	amount_str = line;
+			time_t	date = BitcoinExchange::stodate(date_str);
+			double	amount = BitcoinExchange::stod(amount_str);
+			if (amount < 0)
+				throw (std::invalid_argument("can't proses negative values."));
+			this->_db[date] = amount;
+		}
+		catch (std::exception &e)
+		{
+			std::cout << "Record on line " << i << " disrigarded because: " << e.what() << std::endl;
+		}
+		i++;
+	}
+}
+
 
 
 //	helper functions.
@@ -172,7 +203,7 @@ std::ostream & operator << (std::ostream & out_s, const Time_t & obj)
 
 	std::cout	<< time_info->tm_year + 1900 << "-" 
 				<< time_info->tm_mon + 1 << "-" 
-				<< time_info->tm_mday << std::endl;
+				<< time_info->tm_mday;
 	return (out_s);
 }
 
