@@ -131,6 +131,8 @@ time_t	*BitcoinExchange::stodate(std::string str)
 		throw (std::invalid_argument("not a date"));
 	}
 	val = std::mktime(time_info);
+	if (val == -1)
+		throw (std::invalid_argument("not a date"));
 	return (&val);
 }
 
