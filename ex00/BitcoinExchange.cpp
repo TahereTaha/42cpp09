@@ -39,7 +39,34 @@ BitcoinExchange::~BitcoinExchange(void)
 //	std::cout << "BitcoinExchange default destructor." << std::endl;
 }
 
+//	wraper of time_t.
+
+Time_t::Time_t(void) {}
+
+Time_t::Time_t(const Time_t & src) { *this = src; }
+
+Time_t & Time_t::operator = (const Time_t & src)
+{
+	if (this != &src)
+	{
+		this->_val = src._val;
+	}
+	return (*this);
+}
+
+Time_t::~Time_t(void) {}
+
+Time_t::Time_t(time_t val)
+{
+	this->_val = val;
+}
+
 //	constructor.
+//
+//void	BitcoinExchange::initDB(void)
+//{
+//	
+//}
 
 
 //	helper functions.
@@ -89,9 +116,9 @@ double	BitcoinExchange::stod(std::string str)
 }
 
 //on error will throw an exeption.
-time_t	*BitcoinExchange::stodate(std::string str)
+time_t	BitcoinExchange::stodate(std::string str)
 {
-	static time_t	val;
+	time_t	val;
 
 	if (str.find('-') == std::string::npos)
 		throw (std::invalid_argument("not a date"));
@@ -133,10 +160,21 @@ time_t	*BitcoinExchange::stodate(std::string str)
 	val = std::mktime(time_info);
 	if (val == -1)
 		throw (std::invalid_argument("not a date"));
-	return (&val);
+	return (val);
 }
 
+//	stream insertion operator overloading for time_t.
+std::ostream & operator << (std::ostream & out_s, const Time_t & obj)
+{
+	struct tm	*time_info;
 
+	time_info = std::localtime(&(obj._val));
+
+	std::cout	<< time_info->tm_year + 1900 << "-" 
+				<< time_info->tm_mon + 1 << "-" 
+				<< time_info->tm_mday << std::endl;
+	return (out_s);
+}
 
 //	methods.
 
