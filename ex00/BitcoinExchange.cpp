@@ -2,9 +2,12 @@
 
 #include <string>
 #include <stdexcept>
+#include <iostream>
+
 #include <cerrno>
 #include <climits>
 #include <cctype>
+#include <ctime>
 #include <cstring>
 #include <cstdlib>
 #include <cmath>
@@ -63,6 +66,7 @@ long	BitcoinExchange::stol(std::string str)
 	return (val);
 }
 
+//on error will throw an exeption.
 double	BitcoinExchange::stod(std::string str)
 {
 	const char	*c_str = str.c_str();
@@ -83,6 +87,54 @@ double	BitcoinExchange::stod(std::string str)
 	}
 	return (val);
 }
+
+//on error will throw an exeption.
+time_t	*BitcoinExchange::stodate(std::string str)
+{
+	static time_t	val;
+
+	if (str.find('-') == std::string::npos)
+		throw (std::invalid_argument("not a date"));
+	std::string year_str = str.substr(0, str.find('-'));
+	if (year_str.size() == 0)
+		throw (std::invalid_argument("not a date"));
+	str = str.substr(str.find('-') + 1);
+	
+	if (str.find('-') == std::string::npos)
+		throw (std::invalid_argument("not a date"));
+	std::string month_str = str.substr(0, str.find('-'));
+	if (month_str.size() == 0)
+		throw (std::invalid_argument("not a date"));
+	str = str.substr(str.find('-') + 1);
+	
+	if (str.find('-') != std::string::npos)
+		throw (std::invalid_argument("not a date"));
+	std::string day_str = str;
+	if (day_str.size() == 0)
+		throw (std::invalid_argument("not a date"));
+
+	std::time(&val);
+	struct tm	*time_info;
+	time_info = std::localtime(&val);
+	time_info->tm_sec = 0;
+	time_info->tm_min = 0;
+	time_info->tm_hour = 0;
+	try
+	{
+		time_info->tm_mday = BitcoinExchange::stol(day_str);
+		time_info->tm_mon = BitcoinExchange::stol(month_str) - 1;
+		time_info->tm_year = BitcoinExchange::stol(year_str) - 1900;
+	}
+	catch (std::exception &e)
+	{
+		(void)e;
+		throw (std::invalid_argument("not a date"));
+	}
+	val = std::mktime(time_info);
+	return (&val);
+}
+
+
 
 //	methods.
 

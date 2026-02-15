@@ -10,7 +10,7 @@ int	main(int ac, char **av)
 
 	try
 	{
-		std::cout << "the number is: " << BitcoinExchange::stod("  42.3E2") << std::endl;
+		std::cout << "the number is: " << std::ctime(BitcoinExchange::stodate("2021-9-23")) << std::endl;
 	}
 	catch (std::exception &e)
 	{

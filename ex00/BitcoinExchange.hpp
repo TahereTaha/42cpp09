@@ -9,10 +9,11 @@ class BitcoinExchange
 	private:
 
 	public:		//	to be remobed after.
+
 		//	some helper functions.
 		static long		stol(std::string str);
 		static double	stod(std::string str);
-//		static time_t	stodate(std::string str);
+		static time_t	*stodate(std::string str);
 	public:
 
 		BitcoinExchange(void);

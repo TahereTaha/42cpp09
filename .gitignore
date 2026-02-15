@@ -1,4 +1,7 @@
 **/*.swp
+**/*btc
+**/*RPN
+**/*PmergeMe
 **/*test
 **/*.o
 **/*.d
