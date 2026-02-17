@@ -9,6 +9,7 @@ class PmergeMe
 {
 	//	domain data.
 	private:
+		size_t						_comparisonCount;
 		std::vector<unsigned long>	_unsortedContainer;
 		std::vector<unsigned long>	_sortedContainer;
 		std::vector<unsigned long>	_vectorContainer;
@@ -17,12 +18,20 @@ class PmergeMe
 	//	some debuging and visualasing functions.
 	private:
 		void	printVectorContainer(void) const ;
-		void	printVectorContainerPairs(void) const ;
+		void	printVectorContainerPairs(size_t depth) const ;
+		void	printVectorContainerMainChain(size_t depth) const ;
+		void	printVectorContainerPendChain(size_t depth) const ;
+		void	printVectorContainerUnpairdElement(size_t depth) const ;
 
 	//	some helper functions.
 	private:
 		static unsigned long	stoul(std::string str);
 		static unsigned long	jacob_seq(unsigned long n);
+		static size_t			pow(size_t base, size_t exponent);
+
+	//	some methods for the implementation of the algorithm.
+	private:
+		void	vectorSortPairs(void);
 
 	//	some internal methods.
 	private:
