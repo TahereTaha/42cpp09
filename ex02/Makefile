@@ -6,7 +6,7 @@
 #    By: tatahere <tatahere@student.42barcelon      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/31 09:52:48 by tatahere          #+#    #+#              #
-#    Updated: 2026/02/15 07:16:16 by tatahere         ###   ########.fr        #
+#    Updated: 2026/02/17 18:42:35 by tatahere         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ INC_DIR		=	$(ROOT_DIR)inc/
 RM		=	rm -rf
 CXX		=	c++
 
-CXXFLAGS	:=	-Wall -Wextra -Werror -std=c++98 -MMD -O0
+CXXFLAGS	:=	-Wall -Wextra -Werror -std=c++98 -MMD -O0 -g
 
 CINC		:=	-I$(BIN_DIR)
 CINC		+=	-I$(INC_DIR)

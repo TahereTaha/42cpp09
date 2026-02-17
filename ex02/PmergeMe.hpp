@@ -13,7 +13,12 @@ class PmergeMe
 		std::vector<unsigned long>	_sortedContainer;
 		std::vector<unsigned long>	_vectorContainer;
 		std::list<unsigned long>	_listContainer;
-	
+
+	//	some debuging and visualasing functions.
+	private:
+		void	printVectorContainer(void) const ;
+		void	printVectorContainerPairs(void) const ;
+
 	//	some helper functions.
 	private:
 		static unsigned long	stoul(std::string str);
@@ -81,7 +86,7 @@ std::ostream & operator << (std::ostream & out_s, const std::list<T>& obj)
 //	- [x] make the stream insertion operator for the vector and list.
 //	- [x] parse the imput.
 //	- [x] set up some internal values.
-//	- [ ] make a function that returns the Jacobsthal sequence.
+//	- [x] make a function that returns the Jacobsthal sequence.
 //	- [ ] write the algorithm for the vector.
 //	- [ ] write the algorithm for the list.
 //	- [ ] time the algorithm.

@@ -37,6 +37,33 @@ PmergeMe::~PmergeMe(void)
 {
 }
 
+//	some debug and visualasing functions.
+
+void	PmergeMe::printVectorContainer(void) const 
+{
+	std::cout << "The elements in the vector container are:" << std::endl;
+	std::cout << "\t" << this->_vectorContainer << std::endl;
+}
+
+void	PmergeMe::printVectorContainerPairs(void) const 
+{
+	std::cout << "The elements in the vector container grouped in pairs are:" << std::endl;
+	size_t	i = 0;
+	while (i < this->_vectorContainer.size() / 2)
+	{
+		std::cout 
+		<< "[" 
+			<< this->_vectorContainer[i] 
+			<< ", " 
+			<< this->_vectorContainer[i + 1] 
+		<< "]";
+		i++;
+	}
+	if (i * 2 < this->_vectorContainer.size())
+		std::cout << " " << this->_vectorContainer[i];
+	std::cout << std::endl;
+}
+
 //	some helper functions.
 
 unsigned long	PmergeMe::stoul(std::string str)
@@ -70,7 +97,7 @@ unsigned long	PmergeMe::jacob_seq(unsigned long n)
 		return (0);
 	if (n == 1)
 		return (1);
-	
+
 	unsigned long	second_preciding = 0;
 	unsigned long	preciding = 1;
 	unsigned long	current = preciding + 2 * second_preciding;
@@ -115,17 +142,10 @@ PmergeMe::PmergeMe(int ac, char **av)
 void	PmergeMe::sortVectorContainer(void)
 {
 	std::cout << "\ndoing the shorting of the vector.\n" << std::endl;
-//	std::cout << "testing the jacobs sequense: " << std::endl;
-//	size_t	i = 0;
-//	while (i < 100)
-//	{
-//		std::cout << PmergeMe::jacob_seq(i) << std::endl;
-//		i++;
-//	}
-//	std::cout << std::endl;
 }
 
 //	methods.
+
 
 void	PmergeMe::run(void)
 {
@@ -136,4 +156,10 @@ void	PmergeMe::run(void)
 	std::cout << "the correct one is:\t\t" << this->_sortedContainer << std::endl;
 	std::cout << "the result of the vector is:\t" << this->_vectorContainer << std::endl;
 }
+
+
+
+
+
+
 
