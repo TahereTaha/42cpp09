@@ -73,31 +73,33 @@ void	PmergeMe::printVectorContainer(void) const
 	std::cout << "\t" << this->_vectorContainer << std::endl;
 }
 
-void	PmergeMe::printVectorContainerMainChainElementLean(size_t depth, size_t index)
+void	PmergeMe::printVectorContainerMainChainElementLean(size_t depth, size_t index) const
 {
 	std::cout << this->getVectorContainerMainChainElement(depth, index);
 }
 
-void	PmergeMe::printVectorContainerMainChainElement(size_t depth, size_t index)
+void	PmergeMe::printVectorContainerMainChainElement(size_t depth, size_t index) const 
 {
-	std::cout << "The element in the vector container at "
+	std::cout << "The element in the vector container at ";
 	std::cout << "depth " << depth << " ";
 	std::cout << "index " << index << " ";
 	std::cout << "is:" << std::endl;
 
-	std::cout << "\t" << this->printVectorContainerMainChainElementLean(depth, index) << std::endl;
+	std::cout << "\t" << this->getVectorContainerMainChainElement(depth, index) << std::endl;
 }
 
 void	PmergeMe::printVectorContainerMainChain(size_t depth) const 
 {
-	std::cout << "The element in the main chain at depth " << depth << " are:" << std::endl;
+	std::cout << "The element in the main chain at ";
+	std::cout << "depth " << depth << " ";
+	std::cout << "are:" << std::endl;
 	size_t	i = 0;
 	std::cout << "\t[";
-	while (i < this->_vectorContainer.size() / 2)
+	while (i < this->getVectorContainerMainChainSize(depth))
 	{
-		std::cout << this->_vectorContainer[i * 2 + 1];
+		this->printVectorContainerMainChainElementLean(depth, i);
 		i++;
-		if (i < this->_vectorContainer.size() / 2)
+		if (i < this->getVectorContainerMainChainSize(depth))
 			std::cout << ", ";
 	}
 	std::cout << "]";
@@ -106,14 +108,21 @@ void	PmergeMe::printVectorContainerMainChain(size_t depth) const
 
 void	PmergeMe::printVectorContainerPendChain(size_t depth) const 
 {
-	std::cout << "The elements in the pend chain at depth " << depth << " are:" << std::endl;
+	std::cout << "The elements in the pend chain at ";
+	std::cout << "depth " << depth << " ";
+	std::cout << "are:" << std::endl;
 	size_t	i = 0;
-	std::cout << "\t[";
-	while (i < this->_vectorContainer.size() / (2 * (depth + 1)))
+	if (depth == 0)
 	{
-		std::cout << this->_vectorContainer[i * 2];
+		std::cout << "\tthere is no pend chain in this level." << std::endl;
+		return ;
+	}
+	std::cout << "\t[";
+	while (i < this->getVectorContainerMainChainSize(depth))
+	{
+		this->printVectorContainerMainChainElementLean(depth - 1, i * 2);
 		i++;
-		if (i < this->_vectorContainer.size() / 2)
+		if (i < this->getVectorContainerMainChainSize(depth))
 			std::cout << ", ";
 	}
 	std::cout << "]";
@@ -122,15 +131,25 @@ void	PmergeMe::printVectorContainerPendChain(size_t depth) const
 
 void	PmergeMe::printVectorContainerUnpairdElement(size_t depth) const 
 {
-	std::cout << "The unpaird element at depth " << depth << " is:" << std::endl;
-	if (this->_vectorContainer.size() / (depth + 1) % 2)
+	std::cout << "The unpaird element at ";
+	std::cout << "depth " << depth << " ";
+	std::cout << "is:" << std::endl;
+	std::cout << "\t";
+	if (depth == 0)
 	{
-		std::cout << "\t";
-		std::cout << this->_vectorContainer[this->_vectorContainer.size() / (depth + 1) - 1];
-	   	std::cout << std::endl;
+		std::cout << "there is no unpaird element at depth 0." << std::endl;
 		return ;
 	}
-	std::cout << "\tthere is no unpaird element here." << std::endl;
+	if (this->getVectorContainerMainChainSize(depth - 1) % 2 == 0)
+	{
+		std::cout << "there is no unpaird element here." << std::endl;
+		return ;
+	}
+	std::cout << "[";
+	size_t	index = this->getVectorContainerMainChainSize(depth - 1) - 1;
+	this->printVectorContainerMainChainElementLean(depth - 1, index);
+	std::cout << "]";
+	std::cout << std::endl;
 }
 
 void	PmergeMe::printVectorContainerMainChainPairs(size_t depth) const 
@@ -139,21 +158,23 @@ void	PmergeMe::printVectorContainerMainChainPairs(size_t depth) const
 	std::cout << depth << " are:" << std::endl;
 	size_t	i = 0;
 	std::cout << "\t";
-	while (i < this->_vectorContainer.size() / (PmergeMe::pow(2, depth + 1)))
+	while (i < this->getVectorContainerMainChainSize(depth) / 2)
 	{
 		std::cout 
-		<< "[" 
-			<< this->_vectorContainer[i * PmergeMe::pow(2, depth + 1) + PmergeMe::pow(2, depth) - 1] 
-			<< ", " 
-			<< this->_vectorContainer[(i + 1) * PmergeMe::pow(2, depth + 1) - 1] 
+		<< "["
+			<< this->getVectorContainerMainChainElement(depth, i * 2)
+			<< ", "
+			<< this->getVectorContainerMainChainElement(depth, i * 2 + 1)
 		<< "]";
 		i++;
 	}
-	if (i < this->_vectorContainer.size() / (PmergeMe::pow(2, depth + 1)))
-		std::cout << " " << this->_vectorContainer[i];
+	if (i * 2 < this->getVectorContainerMainChainSize(depth))
+	{
+		std::cout << " ";
+		this->printVectorContainerMainChainElementLean(depth, i * 2);
+	}
 	std::cout << std::endl;
 }
-
 
 //	some helper functions.
 
@@ -224,6 +245,12 @@ size_t	PmergeMe::getVectorContainerMainChainSize(size_t depth) const
 }
 
 size_t	&PmergeMe::getVectorContainerMainChainElement(size_t depth, size_t index)
+{
+	size_t	i = (index + 1) * PmergeMe::pow(2, depth) - 1;
+	return (this->_vectorContainer[i]);
+}
+
+const size_t	&PmergeMe::getVectorContainerMainChainElement(size_t depth, size_t index) const 
 {
 	size_t	i = (index + 1) * PmergeMe::pow(2, depth) - 1;
 	return (this->_vectorContainer[i]);
