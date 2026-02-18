@@ -57,9 +57,9 @@ PmergeMe::PmergeMe(int ac, char **av)
 	std::cout << "After:\t" << this->_sortedContainer << std::endl;
 
 	this->_vectorContainer = \
-		std::vector<unsigned long>(this->_unsortedContainer.begin(), this->_unsortedContainer.end());
+		std::vector<size_t>(this->_unsortedContainer.begin(), this->_unsortedContainer.end());
 	this->_listContainer = \
-		std::list<unsigned long>(this->_unsortedContainer.begin(), this->_unsortedContainer.end());
+		std::list<size_t>(this->_unsortedContainer.begin(), this->_unsortedContainer.end());
 
 //	std::cout << "my vector container:\t" << this->_vectorContainer << std::endl;
 //	std::cout << "my list container:\t" << this->_listContainer << std::endl;
@@ -73,7 +73,7 @@ void	PmergeMe::printVectorContainer(void) const
 	std::cout << "\t" << this->_vectorContainer << std::endl;
 }
 
-void	PmergeMe::printVectorContainerPairs(size_t depth) const 
+void	PmergeMe::printVectorContainerMainChainPairs(size_t depth) const 
 {
 	std::cout << "The elements in the vector container grouped in pairs at depth ";
 	std::cout << depth << " are:" << std::endl;
@@ -141,12 +141,12 @@ void	PmergeMe::printVectorContainerUnpairdElement(size_t depth) const
 
 //	some helper functions.
 
-unsigned long	PmergeMe::stoul(std::string str)
+size_t	PmergeMe::stoul(std::string str)
 {
 	const char	*c_str = str.c_str();
 	char		*end_ptr;
 
-	unsigned long	val = std::strtoul(c_str, &end_ptr, 10);
+	size_t	val = std::strtoul(c_str, &end_ptr, 10);
 	if (*end_ptr != '\0')
 		throw (std::invalid_argument("Error"));
 	if (val == 0)
@@ -165,16 +165,16 @@ unsigned long	PmergeMe::stoul(std::string str)
 }
 
 //	succession is: preciding + 2 * second_preciding
-unsigned long	PmergeMe::jacob_seq(unsigned long n)
+size_t	PmergeMe::jacob_seq(size_t n)
 {
 	if (n == 0)
 		return (0);
 	if (n == 1)
 		return (1);
 
-	unsigned long	second_preciding = 0;
-	unsigned long	preciding = 1;
-	unsigned long	current = preciding + 2 * second_preciding;
+	size_t	second_preciding = 0;
+	size_t	preciding = 1;
+	size_t	current = preciding + 2 * second_preciding;
 	n -= 2;
 	while (n != 0)
 	{
@@ -202,8 +202,14 @@ size_t	PmergeMe::pow(size_t base, size_t exponent)
 
 //	some methods for the implementation of the algorithm.
 
-void	PmergeMe::vectorSortPairs(void)
+size_t	PmergeMe::getVectorContainerMainChainSize(size_t depth) const
 {
+	return (this->_vectorContainer.size() / (PmergeMe::pow(2, depth)));
+}
+
+void	PmergeMe::sortVectorContainerMainChainPairs(size_t depth)
+{
+	(void)depth;
 	size_t	i = 0;
 	while (i < this->_vectorContainer.size() / 2)
 	{
@@ -211,7 +217,7 @@ void	PmergeMe::vectorSortPairs(void)
 		this->_comparisonCount++;
 		if (this->_vectorContainer[i * 2] > this->_vectorContainer[i * 2 + 1])
 		{
-			unsigned long	temp = this->_vectorContainer[i * 2];
+			size_t	temp = this->_vectorContainer[i * 2];
 			this->_vectorContainer[i * 2] = this->_vectorContainer[i * 2 + 1];
 			this->_vectorContainer[i * 2 + 1] = temp;
 		}
@@ -225,7 +231,7 @@ void	PmergeMe::vectorSortPairs(void)
 void	PmergeMe::sortVectorContainer(void)
 {
 	std::cout << "\ndoing the shorting of the vector.\n" << std::endl;
-	this->vectorSortPairs();
+	this->sortVectorContainerMainChainPairs(0);
 }
 
 //	methods.

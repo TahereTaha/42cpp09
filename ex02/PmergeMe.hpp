@@ -9,29 +9,33 @@ class PmergeMe
 {
 	//	domain data.
 	private:
-		size_t						_comparisonCount;
-		std::vector<unsigned long>	_unsortedContainer;
-		std::vector<unsigned long>	_sortedContainer;
-		std::vector<unsigned long>	_vectorContainer;
-		std::list<unsigned long>	_listContainer;
+		size_t				_comparisonCount;
+		std::vector<size_t>	_unsortedContainer;
+		std::vector<size_t>	_sortedContainer;
+		std::vector<size_t>	_vectorContainer;
+		std::list<size_t>	_listContainer;
 
 	//	some debuging and visualasing functions.
 	private:
 		void	printVectorContainer(void) const ;
-		void	printVectorContainerPairs(size_t depth) const ;
+		void	printVectorContainerMainChainElement(size_t depth, size_t index);
+		void	printVectorContainerMainChainPairs(size_t depth) const ;
 		void	printVectorContainerMainChain(size_t depth) const ;
 		void	printVectorContainerPendChain(size_t depth) const ;
 		void	printVectorContainerUnpairdElement(size_t depth) const ;
 
 	//	some helper functions.
 	private:
-		static unsigned long	stoul(std::string str);
-		static unsigned long	jacob_seq(unsigned long n);
-		static size_t			pow(size_t base, size_t exponent);
+		static size_t	stoul(std::string str);
+		static size_t	jacob_seq(size_t n);
+		static size_t	pow(size_t base, size_t exponent);
 
 	//	some methods for the implementation of the algorithm.
 	private:
-		void	vectorSortPairs(void);
+		size_t	getVectorContainerMainChainSize(size_t depth) const ;
+		size_t	&getVectorContainerMainChainElement(size_t depth, size_t index);
+		
+		void	sortVectorContainerMainChainPairs(size_t depth);
 
 	//	some internal methods.
 	private:
@@ -39,8 +43,8 @@ class PmergeMe
 		void	sortListContainer(void);
 
 		//	returns the time in microseconds.
-		unsigned long	testVectorSort(void);
-		unsigned long	testListSort(void);
+		size_t	testVectorSort(void);
+		size_t	testListSort(void);
 	public:
 
 		PmergeMe(void);
@@ -96,6 +100,12 @@ std::ostream & operator << (std::ostream & out_s, const std::list<T>& obj)
 //	- [x] parse the imput.
 //	- [x] set up some internal values.
 //	- [x] make a function that returns the Jacobsthal sequence.
+//	- [ ] make some data manipulation functions for the vector.
+//		- [ ] make the get main chain size.
+//		- [ ] make the get main chain element.
+//		- [ ] make the swap main chain elements.
+//	- [ ] write up some debuging functions.
+//	- [ ] write the algorithm for the vector.
 //	- [ ] write the algorithm for the vector.
 //	- [ ] write the algorithm for the list.
 //	- [ ] time the algorithm.
