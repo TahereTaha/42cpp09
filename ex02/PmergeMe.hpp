@@ -36,7 +36,8 @@ class PmergeMe
 
 	//	some methods for the implementation of the algorithm.
 	private:
-		size_t			getVectorContainerMainChainSize(size_t depth) const ;
+		size_t	getVectorContainerChainSize(size_t depth) const ;
+
 		size_t			&getVectorContainerMainChainElement(size_t depth, size_t index);
 		const size_t	&getVectorContainerMainChainElement(size_t depth, size_t index) const ;
 		
