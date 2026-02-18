@@ -18,11 +18,15 @@ class PmergeMe
 	//	some debuging and visualasing functions.
 	private:
 		void	printVectorContainer(void) const ;
-		void	printVectorContainerMainChainElement(size_t depth, size_t index);
-		void	printVectorContainerMainChainPairs(size_t depth) const ;
+		
+		void	printVectorContainerMainChainElementLean(size_t depth, size_t index) const ;
+		void	printVectorContainerMainChainElement(size_t depth, size_t index) const ;
+		
 		void	printVectorContainerMainChain(size_t depth) const ;
 		void	printVectorContainerPendChain(size_t depth) const ;
 		void	printVectorContainerUnpairdElement(size_t depth) const ;
+		
+		void	printVectorContainerMainChainPairs(size_t depth) const ;
 
 	//	some helper functions.
 	private:

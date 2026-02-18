@@ -73,25 +73,19 @@ void	PmergeMe::printVectorContainer(void) const
 	std::cout << "\t" << this->_vectorContainer << std::endl;
 }
 
-void	PmergeMe::printVectorContainerMainChainPairs(size_t depth) const 
+void	PmergeMe::printVectorContainerMainChainElementLean(size_t depth, size_t index)
 {
-	std::cout << "The elements in the vector container grouped in pairs at depth ";
-	std::cout << depth << " are:" << std::endl;
-	size_t	i = 0;
-	std::cout << "\t";
-	while (i < this->_vectorContainer.size() / (PmergeMe::pow(2, depth + 1)))
-	{
-		std::cout 
-		<< "[" 
-			<< this->_vectorContainer[i * PmergeMe::pow(2, depth + 1) + PmergeMe::pow(2, depth) - 1] 
-			<< ", " 
-			<< this->_vectorContainer[(i + 1) * PmergeMe::pow(2, depth + 1) - 1] 
-		<< "]";
-		i++;
-	}
-	if (i < this->_vectorContainer.size() / (PmergeMe::pow(2, depth + 1)))
-		std::cout << " " << this->_vectorContainer[i];
-	std::cout << std::endl;
+	std::cout << this->getVectorContainerMainChainElement(depth, index);
+}
+
+void	PmergeMe::printVectorContainerMainChainElement(size_t depth, size_t index)
+{
+	std::cout << "The element in the vector container at "
+	std::cout << "depth " << depth << " ";
+	std::cout << "index " << index << " ";
+	std::cout << "is:" << std::endl;
+
+	std::cout << "\t" << this->printVectorContainerMainChainElementLean(depth, index) << std::endl;
 }
 
 void	PmergeMe::printVectorContainerMainChain(size_t depth) const 
@@ -138,6 +132,28 @@ void	PmergeMe::printVectorContainerUnpairdElement(size_t depth) const
 	}
 	std::cout << "\tthere is no unpaird element here." << std::endl;
 }
+
+void	PmergeMe::printVectorContainerMainChainPairs(size_t depth) const 
+{
+	std::cout << "The elements in the vector container grouped in pairs at depth ";
+	std::cout << depth << " are:" << std::endl;
+	size_t	i = 0;
+	std::cout << "\t";
+	while (i < this->_vectorContainer.size() / (PmergeMe::pow(2, depth + 1)))
+	{
+		std::cout 
+		<< "[" 
+			<< this->_vectorContainer[i * PmergeMe::pow(2, depth + 1) + PmergeMe::pow(2, depth) - 1] 
+			<< ", " 
+			<< this->_vectorContainer[(i + 1) * PmergeMe::pow(2, depth + 1) - 1] 
+		<< "]";
+		i++;
+	}
+	if (i < this->_vectorContainer.size() / (PmergeMe::pow(2, depth + 1)))
+		std::cout << " " << this->_vectorContainer[i];
+	std::cout << std::endl;
+}
+
 
 //	some helper functions.
 
