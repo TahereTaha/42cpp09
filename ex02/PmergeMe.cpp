@@ -207,6 +207,12 @@ size_t	PmergeMe::getVectorContainerMainChainSize(size_t depth) const
 	return (this->_vectorContainer.size() / (PmergeMe::pow(2, depth)));
 }
 
+size_t	&PmergeMe::getVectorContainerMainChainElement(size_t depth, size_t index)
+{
+	size_t	i = (index + 1) * PmergeMe::pow(2, depth) - 1;
+	return (this->_vectorContainer[i]);
+}
+
 void	PmergeMe::sortVectorContainerMainChainPairs(size_t depth)
 {
 	(void)depth;
