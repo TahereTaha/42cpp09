@@ -36,11 +36,17 @@ class PmergeMe
 
 	//	some methods for the implementation of the algorithm.
 	private:
+		size_t	getVectorContainerAbsoluteIndex(size_t depth, size_t relative_index) const ;
 		size_t	getVectorContainerChainSize(size_t depth) const ;
 
 		size_t			&getVectorContainerMainChainElement(size_t depth, size_t index);
 		const size_t	&getVectorContainerMainChainElement(size_t depth, size_t index) const ;
 		
+		void	swapVectorContaineMainChainElementsSimple(size_t depth, \
+				size_t index1, \
+				size_t index2);
+		void	swapVectorContaineMainChainElements(size_t depth, size_t index1, size_t index2);
+
 		void	sortVectorContainerMainChainPairs(size_t depth);
 
 	//	some internal methods.
@@ -97,8 +103,6 @@ std::ostream & operator << (std::ostream & out_s, const std::list<T>& obj)
 
 	return (out_s);
 }
-
-
 
 //	todo list:
 //	- [x] make the stoul.

@@ -239,6 +239,11 @@ size_t	PmergeMe::pow(size_t base, size_t exponent)
 
 //	some methods for the implementation of the algorithm.
 
+size_t	PmergeMe::getVectorContainerAbsoluteIndex(size_t depth, size_t relative_index) const 
+{
+	return ((relative_index + 1) * PmergeMe::pow(2, depth) - 1);
+}
+
 size_t	PmergeMe::getVectorContainerChainSize(size_t depth) const
 {
 	return (this->_vectorContainer.size() / (PmergeMe::pow(2, depth)));
@@ -246,43 +251,71 @@ size_t	PmergeMe::getVectorContainerChainSize(size_t depth) const
 
 size_t	&PmergeMe::getVectorContainerMainChainElement(size_t depth, size_t index)
 {
-	size_t	i = (index + 1) * PmergeMe::pow(2, depth) - 1;
+	size_t	i = this->getVectorContainerAbsoluteIndex(depth, index);
 	return (this->_vectorContainer[i]);
 }
 
 const size_t	&PmergeMe::getVectorContainerMainChainElement(size_t depth, size_t index) const 
 {
-	size_t	i = (index + 1) * PmergeMe::pow(2, depth) - 1;
+	size_t	i = this->getVectorContainerAbsoluteIndex(depth, index);
 	return (this->_vectorContainer[i]);
 }
 
+void	PmergeMe::swapVectorContaineMainChainElementsSimple(size_t depth, \
+		size_t index1, \
+		size_t index2)
+{
+	size_t	tmp1 = this->getVectorContainerMainChainElement(depth, index1);
+	size_t	tmp2 = this->getVectorContainerMainChainElement(depth, index2);
+	this->getVectorContainerMainChainElement(depth, index1) = tmp2;
+	this->getVectorContainerMainChainElement(depth, index2) = tmp1;
+}
 
+void	PmergeMe::swapVectorContaineMainChainElements(size_t depth, size_t index1, size_t index2)
+{
+	swapVectorContaineMainChainElementsSimple(depth, index1, index2);
+	if (depth > 0)
+	{
+		size_t	lesser_index1 = this->getVectorContainerAbsoluteIndex(1, index1) - 1;
+		size_t	lesser_index2 = this->getVectorContainerAbsoluteIndex(1, index2) - 1;
+		swapVectorContaineMainChainElements(depth - 1, lesser_index1, lesser_index2);
+	}
+	if (depth > 1)
+	{
+		size_t	lesser_index1 = this->getVectorContainerAbsoluteIndex(2, index1) - 1;
+		size_t	lesser_index2 = this->getVectorContainerAbsoluteIndex(2, index2) - 1;
+		swapVectorContaineMainChainElements(depth - 2, lesser_index1, lesser_index2);
+	}
+}
 
 void	PmergeMe::sortVectorContainerMainChainPairs(size_t depth)
 {
-	(void)depth;
 	size_t	i = 0;
-	while (i < this->_vectorContainer.size() / 2)
+	while (i < this->getVectorContainerChainSize(depth) / 2)
 	{
 		//	number comparison
 		this->_comparisonCount++;
-		if (this->_vectorContainer[i * 2] > this->_vectorContainer[i * 2 + 1])
+		if (this->getVectorContainerMainChainElement(depth, i * 2) \
+			> this->getVectorContainerMainChainElement(depth, i * 2 + 1))
 		{
-			size_t	temp = this->_vectorContainer[i * 2];
-			this->_vectorContainer[i * 2] = this->_vectorContainer[i * 2 + 1];
-			this->_vectorContainer[i * 2 + 1] = temp;
+			this->swapVectorContaineMainChainElements(depth, i * 2, i * 2 + 1);
 		}
 		i++;
 	}
 }
-
 
 //	internal methods.
 
 void	PmergeMe::sortVectorContainer(void)
 {
 	std::cout << "\ndoing the shorting of the vector.\n" << std::endl;
-	this->sortVectorContainerMainChainPairs(0);
+	size_t i = 0;
+	while (this->getVectorContainerChainSize(i))
+	{
+		this->sortVectorContainerMainChainPairs(i);
+		i++;
+	}
+	i--;
 }
 
 //	methods.
