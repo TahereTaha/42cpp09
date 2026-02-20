@@ -42,12 +42,14 @@ class PmergeMe
 		size_t			&getVectorContainerMainChainElement(size_t depth, size_t index);
 		const size_t	&getVectorContainerMainChainElement(size_t depth, size_t index) const ;
 		
-		void	swapVectorContaineMainChainElementsSimple(size_t depth, \
+		void	swapVectorContainerMainChainElementsSimple(size_t depth, \
 				size_t index1, \
 				size_t index2);
-		void	swapVectorContaineMainChainElements(size_t depth, size_t index1, size_t index2);
+		void	swapVectorContainerMainChainElements(size_t depth, size_t index1, size_t index2);
 
 		void	sortVectorContainerMainChainPairs(size_t depth);
+		void	insertVectorContainerElementToMainChain(size_t depth, size_t index);
+		void	insertVectorContainerPendChainToMainChain(size_t depth);
 
 	//	some internal methods.
 	private:

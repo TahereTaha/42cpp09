@@ -261,7 +261,7 @@ const size_t	&PmergeMe::getVectorContainerMainChainElement(size_t depth, size_t 
 	return (this->_vectorContainer[i]);
 }
 
-void	PmergeMe::swapVectorContaineMainChainElementsSimple(size_t depth, \
+void	PmergeMe::swapVectorContainerMainChainElementsSimple(size_t depth, \
 		size_t index1, \
 		size_t index2)
 {
@@ -271,20 +271,20 @@ void	PmergeMe::swapVectorContaineMainChainElementsSimple(size_t depth, \
 	this->getVectorContainerMainChainElement(depth, index2) = tmp1;
 }
 
-void	PmergeMe::swapVectorContaineMainChainElements(size_t depth, size_t index1, size_t index2)
+void	PmergeMe::swapVectorContainerMainChainElements(size_t depth, size_t index1, size_t index2)
 {
-	swapVectorContaineMainChainElementsSimple(depth, index1, index2);
+	swapVectorContainerMainChainElementsSimple(depth, index1, index2);
 	if (depth > 0)
 	{
 		size_t	lesser_index1 = this->getVectorContainerAbsoluteIndex(1, index1) - 1;
 		size_t	lesser_index2 = this->getVectorContainerAbsoluteIndex(1, index2) - 1;
-		swapVectorContaineMainChainElements(depth - 1, lesser_index1, lesser_index2);
+		swapVectorContainerMainChainElements(depth - 1, lesser_index1, lesser_index2);
 	}
 	if (depth > 1)
 	{
 		size_t	lesser_index1 = this->getVectorContainerAbsoluteIndex(2, index1) - 1;
 		size_t	lesser_index2 = this->getVectorContainerAbsoluteIndex(2, index2) - 1;
-		swapVectorContaineMainChainElements(depth - 2, lesser_index1, lesser_index2);
+		swapVectorContainerMainChainElements(depth - 2, lesser_index1, lesser_index2);
 	}
 }
 
@@ -298,9 +298,37 @@ void	PmergeMe::sortVectorContainerMainChainPairs(size_t depth)
 		if (this->getVectorContainerMainChainElement(depth, i * 2) \
 			> this->getVectorContainerMainChainElement(depth, i * 2 + 1))
 		{
-			this->swapVectorContaineMainChainElements(depth, i * 2, i * 2 + 1);
+			this->swapVectorContainerMainChainElements(depth, i * 2, i * 2 + 1);
 		}
 		i++;
+	}
+}
+
+void	PmergeMe::insertVectorContainerElementToMainChain(size_t depth, size_t index)
+{
+	size_t	lower_jacob_num;
+	size_t	uper_jacob_num;
+
+	if (depth = 0 || index == 0)
+		return ;
+
+	//	get the jacob numbers above and below our target index.
+	{
+		size_t i = 1;
+		uper_jacob_num = PmergeMe::jacob_seq(i);
+		while (uper_jacob_num < index)
+		{
+			lower_jacob_num = uper_jacob_num;
+			i++;
+			uper_jacob_num = PmergeMe::jacob_seq(i);
+		}
+	}
+	size_t	target_index;
+
+	// find our target index.
+	{
+		size_t absolute_index = this->getVectorContainerAbsoluteIndex(1, index);
+		
 	}
 }
 
@@ -315,6 +343,7 @@ void	PmergeMe::sortVectorContainer(void)
 		this->sortVectorContainerMainChainPairs(i);
 		i++;
 	}
+	i--;
 	i--;
 }
 
