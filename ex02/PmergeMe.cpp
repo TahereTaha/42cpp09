@@ -132,7 +132,7 @@ size_t	PmergeMe::pow(size_t base, size_t exponent)
 
 //	some methods for the implementation of the algorithm.
 
-tuple3vec	PmergeMe::splitVector(std::vector<size_t> vec)
+tuple3vec	PmergeMe::splitVector(std::vector<size_t> chain)
 {
 	//	pair the elements of the vector 
 	//and push the bigest to the main chain and the smolest to the pend chain.
@@ -140,28 +140,28 @@ tuple3vec	PmergeMe::splitVector(std::vector<size_t> vec)
 	std::vector<size_t>	pend_chain;
 	std::vector<size_t>	change;
 	size_t	i = 0;
-	while (i < vec.size() / 2)
+	while (i < chain.size() / 2)
 	{
 		this->_vectorContainerComparisonCount++;
-		if (vec[i * 2] < vec[i * 2  + 1])
+		if (chain[i * 2] < chain[i * 2  + 1])
 		{
-			pend_chain.push_back(vec[i * 2]);
-			main_chain.push_back(vec[i * 2 + 1]);
+			pend_chain.push_back(chain[i * 2]);
+			main_chain.push_back(chain[i * 2 + 1]);
 			change.push_back(i * 2);
 			change.push_back(i * 2 + 1);
 		}
 		else
 		{
-			pend_chain.push_back(vec[i * 2 + 1]);
-			main_chain.push_back(vec[i * 2]);
+			pend_chain.push_back(chain[i * 2 + 1]);
+			main_chain.push_back(chain[i * 2]);
 			change.push_back(i * 2 + 1);
 			change.push_back(i * 2);
 		}
 		i++;
 	}
 	//	if there is a element left out of a pair it is apended to the pend chain at the end.
-	if (vec.size() % 2)
-		pend_chain.push_back(vec[i * 2]);
+	if (chain.size() % 2)
+		pend_chain.push_back(chain[i * 2]);
 
 	tuple3vec return_val;
 	return_val._elem_1 = main_chain;
@@ -170,24 +170,24 @@ tuple3vec	PmergeMe::splitVector(std::vector<size_t> vec)
 	return (return_val);
 }
 
-tuple2vec	PmergeMe::sortVector(std::vector<size_t> vec)
+tuple2vec	PmergeMe::sortVector(std::vector<size_t> chain)
 {
 	std::vector<size_t>	change;
 	std::vector<size_t>	main_chain;
 	std::vector<size_t>	pend_chain;
 	
-	if (vec.size() == 1)
+	if (chain.size() == 1)
 	{
 		change.push_back(0);
 		tuple2vec return_val;
-		return_val._elem_1 = vec;
+		return_val._elem_1 = chain;
 		return_val._elem_2 = change;
 		return (return_val);
 	}
 
 	//	split both chains.
 	{
-		tuple3vec	return_val = this->splitVector(vec);
+		tuple3vec	return_val = this->splitVector(chain);
 		main_chain = return_val._elem_1;
 		pend_chain = return_val._elem_2;
 		change = return_val._elem_3;
@@ -207,8 +207,8 @@ tuple2vec	PmergeMe::sortVector(std::vector<size_t> vec)
 		main_chain = return_val._elem_1;
 	}
 
-	Tuple_2<std::vector<size_t>, std::vector<size_t> > return_val;
-	return_val._elem_1 = vec;
+	tuple2vec	return_val;
+	return_val._elem_1 = chain;
 	return_val._elem_2 = change;
 	return (return_val);
 }
@@ -220,7 +220,7 @@ tuple2vec	PmergeMe::sortVector(std::vector<size_t> vec)
 void	PmergeMe::sortVectorContainer(void)
 {
 	std::cout << "\ndoing the shorting of the vector.\n" << std::endl;
-	Tuple_2<std::vector<size_t>, std::vector<size_t> >	result = sortVector(this->_vectorContainer);
+	tuple2vec	result = sortVector(this->_vectorContainer);
 	this->_vectorContainer = result._elem_1;
 }
 
