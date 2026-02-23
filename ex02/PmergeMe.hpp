@@ -5,28 +5,76 @@
 #include <list>
 #include <iostream>
 
+//	a simple tuple class for only 2 elements.
+template <typename T1, typename T2>
+class Tuple_2
+{
+	public:
+		//	values of the tuple.
+		T1	_elem_1;
+		T2	_elem_2;
+
+		Tuple_2(void) {}
+		Tuple_2(const Tuple_2<T1, T2> &src) 
+		{
+			this->_elem_1 = src._elem_1;
+			this->_elem_2 = src._elem_2;
+		}
+		~Tuple_2(void) {}
+		Tuple_2 & operator = (const Tuple_2<T1, T2> src) 
+		{
+			if (this != &src)
+			{
+				this->_elem_1 = src._elem_1;
+				this->_elem_2 = src._elem_2;
+			}
+			return (*this);
+		}
+};
+
+//	a simple tuple class for only 3 elements.
+template <typename T1, typename T2, typename T3>
+class Tuple_3
+{
+	public:
+		//	values of the tuple.
+		T1	_elem_1;
+		T2	_elem_2;
+		T3	_elem_3;
+
+		Tuple_3(void) {}
+		Tuple_3(const Tuple_3<T1, T2, T3> &src) 
+		{
+			this->_elem_1 = src._elem_1;
+			this->_elem_2 = src._elem_2;
+			this->_elem_3 = src._elem_3;
+		}
+		~Tuple_3(void) {}
+		Tuple_3 & operator = (const Tuple_3<T1, T2, T3> src) 
+		{
+			if (this != &src)
+			{
+				this->_elem_1 = src._elem_1;
+				this->_elem_2 = src._elem_2;
+				this->_elem_3 = src._elem_3;
+			}
+			return (*this);
+		}
+};
+
+typedef	Tuple_2<std::vector<size_t>, std::vector<size_t> > tuple2vec;
+typedef	Tuple_3<std::vector<size_t>, std::vector<size_t>, std::vector<size_t> > tuple3vec;
+
 class PmergeMe
 {
 	//	domain data.
 	private:
-		size_t				_comparisonCount;
+		size_t				_vectorContainerComparisonCount;
+		size_t				_listContainerComparisonCount;
 		std::vector<size_t>	_unsortedContainer;
 		std::vector<size_t>	_sortedContainer;
 		std::vector<size_t>	_vectorContainer;
 		std::list<size_t>	_listContainer;
-
-	//	some debuging and visualasing functions.
-	private:
-		void	printVectorContainer(void) const ;
-		
-		void	printVectorContainerMainChainElementLean(size_t depth, size_t index) const ;
-		void	printVectorContainerMainChainElement(size_t depth, size_t index) const ;
-		
-		void	printVectorContainerMainChain(size_t depth) const ;
-		void	printVectorContainerPendChain(size_t depth) const ;
-		void	printVectorContainerUnpairdElement(size_t depth) const ;
-		
-		void	printVectorContainerMainChainPairs(size_t depth) const ;
 
 	//	some helper functions.
 	private:
@@ -36,20 +84,11 @@ class PmergeMe
 
 	//	some methods for the implementation of the algorithm.
 	private:
-		size_t	getVectorContainerAbsoluteIndex(size_t depth, size_t relative_index) const ;
-		size_t	getVectorContainerChainSize(size_t depth) const ;
+		//	splits the bector into the main chain and the pend chain and return at the end the position changes of this action.
+		tuple3vec	splitVector(std::vector<size_t>);
+		//	it returns the vector sorted and the change that each element has had.
+		tuple2vec	sortVector(std::vector<size_t>);
 
-		size_t			&getVectorContainerMainChainElement(size_t depth, size_t index);
-		const size_t	&getVectorContainerMainChainElement(size_t depth, size_t index) const ;
-		
-		void	swapVectorContainerMainChainElementsSimple(size_t depth, \
-				size_t index1, \
-				size_t index2);
-		void	swapVectorContainerMainChainElements(size_t depth, size_t index1, size_t index2);
-
-		void	sortVectorContainerMainChainPairs(size_t depth);
-		void	insertVectorContainerElementToMainChain(size_t depth, size_t index);
-		void	insertVectorContainerPendChainToMainChain(size_t depth);
 
 	//	some internal methods.
 	private:
@@ -105,6 +144,7 @@ std::ostream & operator << (std::ostream & out_s, const std::list<T>& obj)
 
 	return (out_s);
 }
+
 
 //	todo list:
 //	- [x] make the stoul.

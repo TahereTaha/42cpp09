@@ -14,6 +14,7 @@ int	main(int ac, char **av)
 	{
 		PmergeMe	merge_insertion(ac, av);
 		merge_insertion.run();
+		std::cout << "the algorithm finished." << std::endl;
 	}
 	catch (std::exception &e)
 	{

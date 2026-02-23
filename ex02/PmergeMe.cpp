@@ -14,7 +14,8 @@
 //	canonical orthodox form.
 PmergeMe::PmergeMe(void)
 {
-	this->_comparisonCount = 0;
+	this->_vectorContainerComparisonCount = 0;
+	this->_listContainerComparisonCount = 0;
 }
 
 PmergeMe::PmergeMe(const PmergeMe & src)
@@ -26,7 +27,8 @@ PmergeMe & PmergeMe::operator = (const PmergeMe & src)
 {
 	if (this != &src)
 	{
-		this->_comparisonCount = src._comparisonCount;
+		this->_vectorContainerComparisonCount = src._vectorContainerComparisonCount;
+		this->_listContainerComparisonCount = src._listContainerComparisonCount;
 		this->_unsortedContainer = src._unsortedContainer;
 		this->_sortedContainer = src._sortedContainer;
 		this->_vectorContainer = src._vectorContainer;
@@ -43,7 +45,8 @@ PmergeMe::~PmergeMe(void)
 
 PmergeMe::PmergeMe(int ac, char **av)
 {
-	this->_comparisonCount = 0;
+	this->_vectorContainerComparisonCount = 0;
+	this->_listContainerComparisonCount = 0;
 	size_t	i = 1;
 	while (i < (size_t)ac)
 	{
@@ -65,116 +68,6 @@ PmergeMe::PmergeMe(int ac, char **av)
 //	std::cout << "my list container:\t" << this->_listContainer << std::endl;
 }
 
-//	some debug and visualasing functions.
-
-void	PmergeMe::printVectorContainer(void) const 
-{
-	std::cout << "The elements in the vector container are:" << std::endl;
-	std::cout << "\t" << this->_vectorContainer << std::endl;
-}
-
-void	PmergeMe::printVectorContainerMainChainElementLean(size_t depth, size_t index) const
-{
-	std::cout << this->getVectorContainerMainChainElement(depth, index);
-}
-
-void	PmergeMe::printVectorContainerMainChainElement(size_t depth, size_t index) const 
-{
-	std::cout << "The element in the vector container at ";
-	std::cout << "depth " << depth << " ";
-	std::cout << "index " << index << " ";
-	std::cout << "is:" << std::endl;
-
-	std::cout << "\t" << this->getVectorContainerMainChainElement(depth, index) << std::endl;
-}
-
-void	PmergeMe::printVectorContainerMainChain(size_t depth) const 
-{
-	std::cout << "The element in the main chain at ";
-	std::cout << "depth " << depth << " ";
-	std::cout << "are:" << std::endl;
-	size_t	i = 0;
-	std::cout << "\t[";
-	while (i < this->getVectorContainerChainSize(depth))
-	{
-		this->printVectorContainerMainChainElementLean(depth, i);
-		i++;
-		if (i < this->getVectorContainerChainSize(depth))
-			std::cout << ", ";
-	}
-	std::cout << "]";
-	std::cout << std::endl;
-}
-
-void	PmergeMe::printVectorContainerPendChain(size_t depth) const 
-{
-	std::cout << "The elements in the pend chain at ";
-	std::cout << "depth " << depth << " ";
-	std::cout << "are:" << std::endl;
-	size_t	i = 0;
-	if (depth == 0)
-	{
-		std::cout << "\tthere is no pend chain in this level." << std::endl;
-		return ;
-	}
-	std::cout << "\t[";
-	while (i < this->getVectorContainerChainSize(depth))
-	{
-		this->printVectorContainerMainChainElementLean(depth - 1, i * 2);
-		i++;
-		if (i < this->getVectorContainerChainSize(depth))
-			std::cout << ", ";
-	}
-	std::cout << "]";
-	std::cout << std::endl;
-}
-
-void	PmergeMe::printVectorContainerUnpairdElement(size_t depth) const 
-{
-	std::cout << "The unpaird element at ";
-	std::cout << "depth " << depth << " ";
-	std::cout << "is:" << std::endl;
-	std::cout << "\t";
-	if (depth == 0)
-	{
-		std::cout << "there is no unpaird element at depth 0." << std::endl;
-		return ;
-	}
-	if (this->getVectorContainerChainSize(depth - 1) % 2 == 0)
-	{
-		std::cout << "there is no unpaird element here." << std::endl;
-		return ;
-	}
-	std::cout << "[";
-	size_t	index = this->getVectorContainerChainSize(depth - 1) - 1;
-	this->printVectorContainerMainChainElementLean(depth - 1, index);
-	std::cout << "]";
-	std::cout << std::endl;
-}
-
-void	PmergeMe::printVectorContainerMainChainPairs(size_t depth) const 
-{
-	std::cout << "The elements in the vector container grouped in pairs at depth ";
-	std::cout << depth << " are:" << std::endl;
-	size_t	i = 0;
-	std::cout << "\t";
-	while (i < this->getVectorContainerChainSize(depth) / 2)
-	{
-		std::cout 
-		<< "["
-			<< this->getVectorContainerMainChainElement(depth, i * 2)
-			<< ", "
-			<< this->getVectorContainerMainChainElement(depth, i * 2 + 1)
-		<< "]";
-		i++;
-	}
-	if (i * 2 < this->getVectorContainerChainSize(depth))
-	{
-		std::cout << " ";
-		this->printVectorContainerMainChainElementLean(depth, i * 2);
-	}
-	std::cout << std::endl;
-}
 
 //	some helper functions.
 
@@ -239,116 +132,99 @@ size_t	PmergeMe::pow(size_t base, size_t exponent)
 
 //	some methods for the implementation of the algorithm.
 
-size_t	PmergeMe::getVectorContainerAbsoluteIndex(size_t depth, size_t relative_index) const 
+tuple3vec	PmergeMe::splitVector(std::vector<size_t> vec)
 {
-	return ((relative_index + 1) * PmergeMe::pow(2, depth) - 1);
-}
-
-size_t	PmergeMe::getVectorContainerChainSize(size_t depth) const
-{
-	return (this->_vectorContainer.size() / (PmergeMe::pow(2, depth)));
-}
-
-size_t	&PmergeMe::getVectorContainerMainChainElement(size_t depth, size_t index)
-{
-	size_t	i = this->getVectorContainerAbsoluteIndex(depth, index);
-	return (this->_vectorContainer[i]);
-}
-
-const size_t	&PmergeMe::getVectorContainerMainChainElement(size_t depth, size_t index) const 
-{
-	size_t	i = this->getVectorContainerAbsoluteIndex(depth, index);
-	return (this->_vectorContainer[i]);
-}
-
-void	PmergeMe::swapVectorContainerMainChainElementsSimple(size_t depth, \
-		size_t index1, \
-		size_t index2)
-{
-	size_t	tmp1 = this->getVectorContainerMainChainElement(depth, index1);
-	size_t	tmp2 = this->getVectorContainerMainChainElement(depth, index2);
-	this->getVectorContainerMainChainElement(depth, index1) = tmp2;
-	this->getVectorContainerMainChainElement(depth, index2) = tmp1;
-}
-
-void	PmergeMe::swapVectorContainerMainChainElements(size_t depth, size_t index1, size_t index2)
-{
-	swapVectorContainerMainChainElementsSimple(depth, index1, index2);
-	if (depth > 0)
-	{
-		size_t	lesser_index1 = this->getVectorContainerAbsoluteIndex(1, index1) - 1;
-		size_t	lesser_index2 = this->getVectorContainerAbsoluteIndex(1, index2) - 1;
-		swapVectorContainerMainChainElements(depth - 1, lesser_index1, lesser_index2);
-	}
-	if (depth > 1)
-	{
-		size_t	lesser_index1 = this->getVectorContainerAbsoluteIndex(2, index1) - 1;
-		size_t	lesser_index2 = this->getVectorContainerAbsoluteIndex(2, index2) - 1;
-		swapVectorContainerMainChainElements(depth - 2, lesser_index1, lesser_index2);
-	}
-}
-
-void	PmergeMe::sortVectorContainerMainChainPairs(size_t depth)
-{
+	//	pair the elements of the vector 
+	//and push the bigest to the main chain and the smolest to the pend chain.
+	std::vector<size_t>	main_chain;
+	std::vector<size_t>	pend_chain;
+	std::vector<size_t>	change;
 	size_t	i = 0;
-	while (i < this->getVectorContainerChainSize(depth) / 2)
+	while (i < vec.size() / 2)
 	{
-		//	number comparison
-		this->_comparisonCount++;
-		if (this->getVectorContainerMainChainElement(depth, i * 2) \
-			> this->getVectorContainerMainChainElement(depth, i * 2 + 1))
+		this->_vectorContainerComparisonCount++;
+		if (vec[i * 2] < vec[i * 2  + 1])
 		{
-			this->swapVectorContainerMainChainElements(depth, i * 2, i * 2 + 1);
+			pend_chain.push_back(vec[i * 2]);
+			main_chain.push_back(vec[i * 2 + 1]);
+			change.push_back(i * 2);
+			change.push_back(i * 2 + 1);
+		}
+		else
+		{
+			pend_chain.push_back(vec[i * 2 + 1]);
+			main_chain.push_back(vec[i * 2]);
+			change.push_back(i * 2 + 1);
+			change.push_back(i * 2);
 		}
 		i++;
 	}
+	//	if there is a element left out of a pair it is apended to the pend chain at the end.
+	if (vec.size() % 2)
+		pend_chain.push_back(vec[i * 2]);
+
+	tuple3vec return_val;
+	return_val._elem_1 = main_chain;
+	return_val._elem_2 = pend_chain;
+	return_val._elem_3 = change;
+	return (return_val);
 }
 
-void	PmergeMe::insertVectorContainerElementToMainChain(size_t depth, size_t index)
+tuple2vec	PmergeMe::sortVector(std::vector<size_t> vec)
 {
-	size_t	lower_jacob_num;
-	size_t	uper_jacob_num;
-
-	if (depth = 0 || index == 0)
-		return ;
-
-	//	get the jacob numbers above and below our target index.
+	std::vector<size_t>	change;
+	std::vector<size_t>	main_chain;
+	std::vector<size_t>	pend_chain;
+	
+	if (vec.size() == 1)
 	{
-		size_t i = 1;
-		uper_jacob_num = PmergeMe::jacob_seq(i);
-		while (uper_jacob_num < index)
-		{
-			lower_jacob_num = uper_jacob_num;
-			i++;
-			uper_jacob_num = PmergeMe::jacob_seq(i);
-		}
+		change.push_back(0);
+		tuple2vec return_val;
+		return_val._elem_1 = vec;
+		return_val._elem_2 = change;
+		return (return_val);
 	}
-	size_t	target_index;
 
-	// find our target index.
+	//	split both chains.
 	{
-		size_t absolute_index = this->getVectorContainerAbsoluteIndex(1, index);
-		
+		tuple3vec	return_val = this->splitVector(vec);
+		main_chain = return_val._elem_1;
+		pend_chain = return_val._elem_2;
+		change = return_val._elem_3;
 	}
+
+	std::cout << "\n";
+	std::cout << "this is the main chain: " << std::endl;
+	std::cout << main_chain << std::endl;
+	std::cout << "this is the pend chain: " << std::endl;
+	std::cout << pend_chain << std::endl;
+	std::cout << "this is the change: " << std::endl;
+	std::cout << change << std::endl;
+	std::cout << std::endl;
+	//	sort the main chain and adjust the pend chain.
+	{
+		tuple2vec	return_val = this->sortVector(main_chain);
+		main_chain = return_val._elem_1;
+	}
+
+	Tuple_2<std::vector<size_t>, std::vector<size_t> > return_val;
+	return_val._elem_1 = vec;
+	return_val._elem_2 = change;
+	return (return_val);
 }
+
+
 
 //	internal methods.
 
 void	PmergeMe::sortVectorContainer(void)
 {
 	std::cout << "\ndoing the shorting of the vector.\n" << std::endl;
-	size_t i = 0;
-	while (this->getVectorContainerChainSize(i))
-	{
-		this->sortVectorContainerMainChainPairs(i);
-		i++;
-	}
-	i--;
-	i--;
+	Tuple_2<std::vector<size_t>, std::vector<size_t> >	result = sortVector(this->_vectorContainer);
+	this->_vectorContainer = result._elem_1;
 }
 
 //	methods.
-
 
 void	PmergeMe::run(void)
 {
