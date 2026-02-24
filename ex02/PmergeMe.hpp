@@ -62,8 +62,8 @@ class Tuple_3
 		}
 };
 
-typedef	Tuple_2<std::vector<size_t>, std::vector<size_t> > tuple2vec;
-typedef	Tuple_3<std::vector<size_t>, std::vector<size_t>, std::vector<size_t> > tuple3vec;
+typedef	Tuple_2<std::vector<long>, std::vector<long> > tuple2vec;
+typedef	Tuple_3<std::vector<long>, std::vector<long>, std::vector<long> > tuple3vec;
 
 class PmergeMe
 {
@@ -71,23 +71,28 @@ class PmergeMe
 	private:
 		size_t				_vectorContainerComparisonCount;
 		size_t				_listContainerComparisonCount;
-		std::vector<size_t>	_unsortedContainer;
-		std::vector<size_t>	_sortedContainer;
-		std::vector<size_t>	_vectorContainer;
-		std::list<size_t>	_listContainer;
+		std::vector<long>	_unsortedContainer;
+		std::vector<long>	_sortedContainer;
+		std::vector<long>	_vectorContainer;
+		std::list<long>	_listContainer;
 
 	//	some helper functions.
 	private:
-		static size_t	stoul(std::string str);
+		static long	stoul(std::string str);
 		static size_t	jacob_seq(size_t n);
 		static size_t	pow(size_t base, size_t exponent);
 
 	//	some methods for the implementation of the algorithm.
 	private:
 		//	splits the bector into the main chain and the pend chain and return at the end the position changes of this action.
-		tuple3vec	splitVector(std::vector<size_t>);
+		tuple3vec	splitVector(std::vector<long>);
+		//	it will append one change after the other.
+		std::vector<long>	combineVectorChangeChains(std::vector<long> change_1, \
+				std::vector<long> change_2);
+		//	it will return the sorted pend chain with a change chain for both main and pend chains.
+		tuple2vec	sortVectorPendChain(std::vector<long> pend_chain, std::vector<long> change);
 		//	it returns the vector sorted and the change that each element has had.
-		tuple2vec	sortVector(std::vector<size_t>);
+		tuple2vec	sortVector(std::vector<long>);
 
 
 	//	some internal methods.

@@ -60,9 +60,9 @@ PmergeMe::PmergeMe(int ac, char **av)
 	std::cout << "After:\t" << this->_sortedContainer << std::endl;
 
 	this->_vectorContainer = \
-		std::vector<size_t>(this->_unsortedContainer.begin(), this->_unsortedContainer.end());
+		std::vector<long>(this->_unsortedContainer.begin(), this->_unsortedContainer.end());
 	this->_listContainer = \
-		std::list<size_t>(this->_unsortedContainer.begin(), this->_unsortedContainer.end());
+		std::list<long>(this->_unsortedContainer.begin(), this->_unsortedContainer.end());
 
 //	std::cout << "my vector container:\t" << this->_vectorContainer << std::endl;
 //	std::cout << "my list container:\t" << this->_listContainer << std::endl;
@@ -71,12 +71,12 @@ PmergeMe::PmergeMe(int ac, char **av)
 
 //	some helper functions.
 
-size_t	PmergeMe::stoul(std::string str)
+long	PmergeMe::stoul(std::string str)
 {
 	const char	*c_str = str.c_str();
 	char		*end_ptr;
 
-	size_t	val = std::strtoul(c_str, &end_ptr, 10);
+	long	val = std::strtoul(c_str, &end_ptr, 10);
 	if (*end_ptr != '\0')
 		throw (std::invalid_argument("Error"));
 	if (val == 0)
@@ -84,7 +84,7 @@ size_t	PmergeMe::stoul(std::string str)
 		if(std::strpbrk(c_str, "0123456789") > end_ptr)
 			throw (std::invalid_argument("Error"));
 	}
-	if (val == ULONG_MAX)
+	if (val == LONG_MAX)
 	{
 		if (errno == ERANGE)
 			throw (std::invalid_argument("Error"));
@@ -132,13 +132,13 @@ size_t	PmergeMe::pow(size_t base, size_t exponent)
 
 //	some methods for the implementation of the algorithm.
 
-tuple3vec	PmergeMe::splitVector(std::vector<size_t> chain)
+tuple3vec	PmergeMe::splitVector(std::vector<long> chain)
 {
 	//	pair the elements of the vector 
 	//and push the bigest to the main chain and the smolest to the pend chain.
-	std::vector<size_t>	main_chain;
-	std::vector<size_t>	pend_chain;
-	std::vector<size_t>	change;
+	std::vector<long>	main_chain;
+	std::vector<long>	pend_chain;
+	std::vector<long>	change;
 	size_t	i = 0;
 	while (i < chain.size() / 2)
 	{
@@ -147,21 +147,24 @@ tuple3vec	PmergeMe::splitVector(std::vector<size_t> chain)
 		{
 			pend_chain.push_back(chain[i * 2]);
 			main_chain.push_back(chain[i * 2 + 1]);
-			change.push_back(i * 2);
-			change.push_back(i * 2 + 1);
+			change.push_back(0);
+			change.push_back(0);
 		}
 		else
 		{
 			pend_chain.push_back(chain[i * 2 + 1]);
 			main_chain.push_back(chain[i * 2]);
-			change.push_back(i * 2 + 1);
-			change.push_back(i * 2);
+			change.push_back(1);
+			change.push_back(-1);
 		}
 		i++;
 	}
 	//	if there is a element left out of a pair it is apended to the pend chain at the end.
 	if (chain.size() % 2)
+	{
 		pend_chain.push_back(chain[i * 2]);
+		change.push_back(0);
+	}
 
 	tuple3vec return_val;
 	return_val._elem_1 = main_chain;
@@ -170,12 +173,42 @@ tuple3vec	PmergeMe::splitVector(std::vector<size_t> chain)
 	return (return_val);
 }
 
-tuple2vec	PmergeMe::sortVector(std::vector<size_t> chain)
+//std::vector<long>	PmergeMe::combineVectorChangeChains(std::vector<long> change_1, std::vector<long> change_2)
+//{
+//	
+//}
+//
+//tuple2vec	PmergeMe::sortVectorPendChain(std::vector<long> pend_chain, std::vector<long> change)
+//{
+//	std::vector<long>	new_change;
+//	std::vector<long>	new_pend_chain;
+//	size_t	i = 0;
+//	while (i < change.size())
+//	{
+//		new_pend_chain.push_back(pend_chain[change[i]]);
+//		new_change.push_back(change[i] * 2);
+//		new_change.push_back(change[i] * 2 + 1);
+//		i++;
+//	}
+//	//	adding the last odd element.
+//	if (pend_chain % 2)
+//	{
+//		new_pend_chain.push_back(pend_chain.size() - 1);
+//		new_change.push_back(change.size() * 2);
+//	}
+//
+//	tuple2vec return_val;
+//	return_val._elem_1 = new_pend_chain;
+//	return_val._elem_2 = new_change;
+//	return (return_val);
+//}
+
+tuple2vec	PmergeMe::sortVector(std::vector<long> chain)
 {
-	std::vector<size_t>	change;
-	std::vector<size_t>	main_chain;
-	std::vector<size_t>	pend_chain;
-	
+	std::vector<long>	change;
+	std::vector<long>	main_chain;
+	std::vector<long>	pend_chain;
+
 	if (chain.size() == 1)
 	{
 		change.push_back(0);
@@ -201,12 +234,31 @@ tuple2vec	PmergeMe::sortVector(std::vector<size_t> chain)
 	std::cout << "this is the change: " << std::endl;
 	std::cout << change << std::endl;
 	std::cout << std::endl;
-	//	sort the main chain and adjust the pend chain.
-	{
-		tuple2vec	return_val = this->sortVector(main_chain);
-		main_chain = return_val._elem_1;
-	}
-
+	
+//	//	sort the main chain and adjust the pend chain.
+//	{
+//		std::vector<long>	sub_change;
+//		//	recurse untill main chain is sorted.
+//		{
+//			tuple2vec	return_val = this->sortVector(main_chain);
+//			main_chain = return_val._elem_1;
+//			sub_change = return_val._elem_2;
+//		}
+//		//	sort the pend chain and build the new change chain.
+//		{
+//			std::vector<long>	new_change;
+//			tuple2vec	return_val = this->sortVectorPendChain(pend_chain, sub_change);
+//			pend_chain = return_val._elem_1;
+//			new_change = return_val._elem_2;
+//			change = this->combineVectorChangeChains(change, new_change);
+//		}
+//	}
+//
+//	//	insert from the pend chain to the main chain.
+//	{
+//		
+//	}
+//
 	tuple2vec	return_val;
 	return_val._elem_1 = chain;
 	return_val._elem_2 = change;
