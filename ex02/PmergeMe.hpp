@@ -91,6 +91,10 @@ class PmergeMe
 				std::vector<long> change_2);
 		//	it will return the sorted pend chain with a change chain for both main and pend chains.
 		tuple2vec	sortVectorPendChain(std::vector<long> pend_chain, std::vector<long> change);
+		size_t		binarySearchVectorElementInChain(std::vector<long> chain, long element);
+		//	it will return the sorted chain with the change.
+		tuple2vec	insertVectorPendToMainChain(std::vector<long> main_chain, \
+				std::vector<long> pend_chain);
 		//	it returns the vector sorted and the change that each element has had.
 		tuple2vec	sortVector(std::vector<long>);
 

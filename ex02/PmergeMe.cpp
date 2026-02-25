@@ -176,11 +176,6 @@ tuple3vec	PmergeMe::splitVector(std::vector<long> chain)
 std::vector<long>	PmergeMe::combineVectorChangeChains(std::vector<long> change_1, \
 		std::vector<long> change_2)
 {
-	//	expand the second chain.
-		std::cout << "change 1" << std::endl;
-		std::cout << change_1 << std::endl;
-		std::cout << "change 2" << std::endl;
-		std::cout << change_2 << std::endl;
 	//	apply the second change to the first one.
 	{
 		std::vector<long> new_change_1;
@@ -191,8 +186,6 @@ std::vector<long>	PmergeMe::combineVectorChangeChains(std::vector<long> change_1
 			i++;
 		}
 		change_1 = new_change_1;
-		std::cout << "change 1 moved:" << std::endl;
-		std::cout << change_1 << std::endl;
 	}
 	//	add together the changes.
 	std::vector<long>	result;
@@ -202,8 +195,6 @@ std::vector<long>	PmergeMe::combineVectorChangeChains(std::vector<long> change_1
 		result.push_back(change_1[i] + change_2[i]);
 		i++;
 	}
-	std::cout << "result:" << std::endl;
-	std::cout << result << std::endl;
 	return (result);
 }
 
@@ -232,6 +223,89 @@ tuple2vec	PmergeMe::sortVectorPendChain(std::vector<long> pend_chain, std::vecto
 	return (return_val);
 }
 
+size_t		PmergeMe::binarySearchVectorElementInChain(std::vector<long> chain, long element)
+{
+	size_t	low = 0;
+	size_t	high = chain.size() - 1;
+	while (low != high)
+	{
+		size_t	span = high - low;
+		size_t	index = low + (span / 2);
+		this->_vectorContainerComparisonCount++;
+		long	comparison = element - chain[index];
+		if (comparison < 0)
+		{
+			high = index;
+		}
+		else if (comparison == 0)
+		{
+			return (index);
+		}
+		else
+		{
+			low = index + 1;
+		}
+	}
+	return (low);
+}
+
+tuple2vec	PmergeMe::insertVectorPendToMainChain(std::vector<long> main_chain, \
+		std::vector<long> pend_chain)
+{
+	std::vector<long>	result_chain;
+	//	the index of the biger element on the end chain.
+	std::vector<long>	pend_chain_order_index;
+
+	//	populate the pend_chain_order_index.
+	{
+		size_t	i = 0;
+		while (i < pend_chain.size())
+		{
+			pend_chain_order_index.push_back(i);
+			i++;
+		}
+	}
+	//	populate the result_chain;
+	{
+		result_chain.push_back(pend_chain[0]);
+		size_t	i = 0;
+		while (i < 2 && i < main_chain.size())
+		{
+			result_chain.push_back(main_chain[i]);
+			i++;
+		}
+	}
+
+//	size_t	i = 1;
+//	size_t	jacob_num = this->jacob_seq(i);
+//	while (jacob_num < pend_chain.size())
+//	{
+//		i++;
+//		jacob_num = this->jacob_seq(i);
+//		size_t	inserted_elem_index = std::min(jacob_num, pend_chain.size()) - 1;
+//		while (inserted_elem_index > this->jacob_seq(i - 1))
+//		{
+//			std::vector<long>	search_chain;
+//			//	fill the search chain.
+//			{
+//				size_t	i2 = 0;
+//				while (i2 < pend_chain_order_index[inserted_elem_index])
+//				{
+//					search_chain.push_back(result_chain[i2]);
+//					i2++;
+//				}
+//			}
+//			size_t	target_insertion_index = this->binarySearchVectorElementInChain();
+//			j--;
+//		}
+//	}
+
+	tuple2vec	return_val;
+	return_val._elem_1 = result_chain;
+	return_val._elem_2 = pend_chain_order_index;
+	return (return_val);
+}
+
 tuple2vec	PmergeMe::sortVector(std::vector<long> chain)
 {
 	std::vector<long>	change;
@@ -255,14 +329,14 @@ tuple2vec	PmergeMe::sortVector(std::vector<long> chain)
 		change = return_val._elem_3;
 	}
 
-	std::cout << "\n";
-	std::cout << "this is the main chain: " << std::endl;
-	std::cout << main_chain << std::endl;
-	std::cout << "this is the pend chain: " << std::endl;
-	std::cout << pend_chain << std::endl;
-	std::cout << "this is the change: " << std::endl;
-	std::cout << change << std::endl;
-	std::cout << std::endl;
+//	std::cout << "\n";
+//	std::cout << "this is the main chain: " << std::endl;
+//	std::cout << main_chain << std::endl;
+//	std::cout << "this is the pend chain: " << std::endl;
+//	std::cout << pend_chain << std::endl;
+//	std::cout << "this is the change: " << std::endl;
+//	std::cout << change << std::endl;
+//	std::cout << std::endl;
 
 	//	sort the main chain and adjust the pend chain.
 	{
@@ -273,17 +347,6 @@ tuple2vec	PmergeMe::sortVector(std::vector<long> chain)
 			main_chain = return_val._elem_1;
 			sub_change = return_val._elem_2;
 		}
-		std::cout << "\n";
-		std::cout << "\tsomething 1\n";
-		std::cout << "this is the main chain: " << std::endl;
-		std::cout << main_chain << std::endl;
-		std::cout << "this is the pend chain: " << std::endl;
-		std::cout << pend_chain << std::endl;
-		std::cout << "this is the change: " << std::endl;
-		std::cout << change << std::endl;
-		std::cout << "this is the sub_change: " << std::endl;
-		std::cout << sub_change << std::endl;
-		std::cout << std::endl;
 		//	sort the pend chain and build the new change chain.
 		{
 			std::vector<long>	new_change;
@@ -291,42 +354,30 @@ tuple2vec	PmergeMe::sortVector(std::vector<long> chain)
 			pend_chain = return_val._elem_1;
 			new_change = return_val._elem_2;
 
-			std::cout << "\n";
-			std::cout << "\tsomething 2\n";
-			std::cout << "this is the main chain: " << std::endl;
-			std::cout << main_chain << std::endl;
-			std::cout << "this is the pend chain: " << std::endl;
-			std::cout << pend_chain << std::endl;
-			std::cout << "this is the change: " << std::endl;
-			std::cout << change << std::endl;
-			std::cout << std::endl;
-			
 			change = this->combineVectorChangeChains(change, new_change);
-			std::vector<long>	new_chain;
-			size_t	i = 0;
-			while (i < chain.size())
-			{
-				new_chain.push_back(chain[i + change[i]]);
-				i++;
-			}
-			chain = new_chain;
 		}
 	}
-	std::cout << "\n";
-	std::cout << "\tsomething 3\n";
-	std::cout << "this is the main chain: " << std::endl;
-	std::cout << main_chain << std::endl;
-	std::cout << "this is the pend chain: " << std::endl;
-	std::cout << pend_chain << std::endl;
-	std::cout << "this is the change: " << std::endl;
-	std::cout << change << std::endl;
-	std::cout << "this is the chain: " << std::endl;
-	std::cout << chain << std::endl;
-	std::cout << std::endl;
+//	std::cout << "\n";
+//	std::cout << "\tsomething 3\n";
+//	std::cout << "this is the main chain: " << std::endl;
+//	std::cout << main_chain << std::endl;
+//	std::cout << "this is the pend chain: " << std::endl;
+//	std::cout << pend_chain << std::endl;
+//	std::cout << "this is the change: " << std::endl;
+//	std::cout << change << std::endl;
+//	std::cout << std::endl;
 
 	//	insert from the pend chain to the main chain.
 	{
-		
+		tuple2vec	return_val = this->sortVectorPendChain(main_chain, pend_chain);
+		std::vector<long>	tmp1 = return_val._elem_1;
+		std::vector<long>	tmp2 = return_val._elem_2;
+
+//		std::cout << "tmp1 is:" << std::endl;
+//		std::cout << tmp1 << std::endl;
+//		std::cout << "tmp2 is:" << std::endl;
+//		std::cout << tmp2 << std::endl;
+
 	}
 
 	tuple2vec	return_val;
