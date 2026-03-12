@@ -74,7 +74,7 @@ class PmergeMe
 		std::vector<long>	_unsortedContainer;
 		std::vector<long>	_sortedContainer;
 		std::vector<long>	_vectorContainer;
-		std::list<long>	_listContainer;
+		std::list<long>		_listContainer;
 
 	//	some helper functions.
 	private:
