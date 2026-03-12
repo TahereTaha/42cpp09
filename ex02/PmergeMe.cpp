@@ -226,7 +226,7 @@ tuple2vec	PmergeMe::sortVectorPendChain(std::vector<long> pend_chain, std::vecto
 size_t		PmergeMe::binarySearchVectorElementInChain(std::vector<long> chain, long element)
 {
 	size_t	low = 0;
-	size_t	high = chain.size() - 1;
+	size_t	high = chain.size();
 	while (low != high)
 	{
 		size_t	span = high - low;
@@ -252,6 +252,14 @@ size_t		PmergeMe::binarySearchVectorElementInChain(std::vector<long> chain, long
 tuple2vec	PmergeMe::insertVectorPendToMainChain(std::vector<long> main_chain, \
 		std::vector<long> pend_chain)
 {
+//	size_t	debug_flag = 0;
+//	if (main_chain.size() > 1)
+//	{
+//		debug_flag = 1;
+//		std::cout << "\n\n\n\n" << std::endl;
+//		std::cout << "main_chain: " << main_chain << std::endl;
+//		std::cout << "pend_chain: " << pend_chain << std::endl;
+//	}
 	std::vector<long>	result_chain;
 	//	the index of the biger element on the end chain.
 	std::vector<long>	pend_chain_order_index;
@@ -261,7 +269,7 @@ tuple2vec	PmergeMe::insertVectorPendToMainChain(std::vector<long> main_chain, \
 		size_t	i = 0;
 		while (i < pend_chain.size())
 		{
-			pend_chain_order_index.push_back(i);
+			pend_chain_order_index.push_back(i + 1);
 			i++;
 		}
 	}
@@ -269,37 +277,98 @@ tuple2vec	PmergeMe::insertVectorPendToMainChain(std::vector<long> main_chain, \
 	{
 		result_chain.push_back(pend_chain[0]);
 		size_t	i = 0;
-		while (i < 2 && i < main_chain.size())
+		while (i < main_chain.size())
 		{
 			result_chain.push_back(main_chain[i]);
 			i++;
 		}
 	}
 
-//	size_t	i = 1;
-//	size_t	jacob_num = this->jacob_seq(i);
-//	while (jacob_num < pend_chain.size())
-//	{
-//		i++;
-//		jacob_num = this->jacob_seq(i);
-//		size_t	inserted_elem_index = std::min(jacob_num, pend_chain.size()) - 1;
-//		while (inserted_elem_index > this->jacob_seq(i - 1))
-//		{
-//			std::vector<long>	search_chain;
-//			//	fill the search chain.
+	size_t	i = 2;
+	size_t	jacob_num = this->jacob_seq(i);
+	while (jacob_num < pend_chain.size())
+	{
+		i++;
+		jacob_num = this->jacob_seq(i);
+		size_t	inserted_elem_index = std::min(jacob_num, pend_chain.size()) - 1;
+	//	if (debug_flag)
+	//	{
+	//			std::cout << "\ninserted_elem_index: " << inserted_elem_index << std::endl;
+	//			std::cout << "i: " << i << std::endl;
+	//			std::cout << "jacob_num: " << jacob_num << std::endl;
+	//			std::cout << "prev_jacob_num: " << this->jacob_seq(i - 1) << std::endl;
+	//	}
+		while (inserted_elem_index >= this->jacob_seq(i - 1))
+		{
+//			if (debug_flag)
 //			{
-//				size_t	i2 = 0;
-//				while (i2 < pend_chain_order_index[inserted_elem_index])
-//				{
-//					search_chain.push_back(result_chain[i2]);
-//					i2++;
-//				}
+//				std::cout << "\ninserting one element, with index of: " << inserted_elem_index << "\n\t\t\tand a val of: " << pend_chain[inserted_elem_index]<< std::endl;
+//				std::cout << "the result_chain is: " << result_chain << std::endl;
+//				std::cout << "the pend_chain_order_index is: " << pend_chain_order_index << std::endl;
 //			}
-//			size_t	target_insertion_index = this->binarySearchVectorElementInChain();
-//			j--;
-//		}
-//	}
+			std::vector<long>	search_chain;
+			//	fill the search chain.
+			if (inserted_elem_index == pend_chain.size() - 1)
+			{
+				search_chain = result_chain;
+			}
+			else
+			{
+				long	i2 = 0;
+				while (i2 < pend_chain_order_index[inserted_elem_index])
+				{
+					search_chain.push_back(result_chain[i2]);
+					i2++;
+				}
+			}
+		//	if (debug_flag)
+		//	{
+		//		std::cout << "the search chain is: " << search_chain << std::endl;
+		//	}
+			size_t	target_insertion_index = this->binarySearchVectorElementInChain(search_chain, pend_chain[inserted_elem_index]);
+	//		if (debug_flag)
+	//		{
+	//			std::cout << "the insertion index is: " << target_insertion_index << std::endl;
+	//		}
+			//	insert the element on the result_chain.
+			{
+				std::vector<long>	new_result_chain;
+				size_t	i2 = 0;
+				while (i2 < target_insertion_index)
+				{
+					new_result_chain.push_back(result_chain[i2]);
+					i2++;
+				}
+				new_result_chain.push_back(pend_chain[inserted_elem_index]);
+				while (i2 < result_chain.size())
+				{
+					new_result_chain.push_back(result_chain[i2]);
+					i2++;
+				}
+				result_chain = new_result_chain;
+			}
+			//	update the pend_chain_order_index
+			{
+				size_t	i2 = inserted_elem_index;
+				while (i2 < pend_chain_order_index.size())
+				{
+					pend_chain_order_index[i2]++;
+					i2++;
+				}
+			}
+			inserted_elem_index--;
+		}
+//		std::cout << "\n\n" << std::endl;
+	}
 
+//	if (debug_flag)
+//	{
+//		std::cout << "\n\nmain_chain: " << main_chain << std::endl;
+//		std::cout << "pend_chain: " << pend_chain << std::endl;
+//		std::cout << "result_chain: " << result_chain << std::endl;
+//		std::cout << "\n\n\n\n" << std::endl;
+//	}
+//	std::cout << "result_chain: " << result_chain << std::endl;
 	tuple2vec	return_val;
 	return_val._elem_1 = result_chain;
 	return_val._elem_2 = pend_chain_order_index;
@@ -329,14 +398,7 @@ tuple2vec	PmergeMe::sortVector(std::vector<long> chain)
 		change = return_val._elem_3;
 	}
 
-//	std::cout << "\n";
-//	std::cout << "this is the main chain: " << std::endl;
-//	std::cout << main_chain << std::endl;
-//	std::cout << "this is the pend chain: " << std::endl;
-//	std::cout << pend_chain << std::endl;
-//	std::cout << "this is the change: " << std::endl;
-//	std::cout << change << std::endl;
-//	std::cout << std::endl;
+	
 
 	//	sort the main chain and adjust the pend chain.
 	{
@@ -357,27 +419,12 @@ tuple2vec	PmergeMe::sortVector(std::vector<long> chain)
 			change = this->combineVectorChangeChains(change, new_change);
 		}
 	}
-//	std::cout << "\n";
-//	std::cout << "\tsomething 3\n";
-//	std::cout << "this is the main chain: " << std::endl;
-//	std::cout << main_chain << std::endl;
-//	std::cout << "this is the pend chain: " << std::endl;
-//	std::cout << pend_chain << std::endl;
-//	std::cout << "this is the change: " << std::endl;
-//	std::cout << change << std::endl;
-//	std::cout << std::endl;
 
 	//	insert from the pend chain to the main chain.
 	{
-		tuple2vec	return_val = this->sortVectorPendChain(main_chain, pend_chain);
-		std::vector<long>	tmp1 = return_val._elem_1;
-		std::vector<long>	tmp2 = return_val._elem_2;
-
-//		std::cout << "tmp1 is:" << std::endl;
-//		std::cout << tmp1 << std::endl;
-//		std::cout << "tmp2 is:" << std::endl;
-//		std::cout << tmp2 << std::endl;
-
+		tuple2vec	return_val = this->insertVectorPendToMainChain(main_chain, pend_chain);
+		//pend_chain = return_val._elem_1;
+		//change = return_val._elem_2;
 	}
 
 	tuple2vec	return_val;
@@ -385,8 +432,6 @@ tuple2vec	PmergeMe::sortVector(std::vector<long> chain)
 	return_val._elem_2 = change;
 	return (return_val);
 }
-
-
 
 //	internal methods.
 
