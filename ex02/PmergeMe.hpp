@@ -65,6 +65,9 @@ class Tuple_3
 typedef	Tuple_2<std::vector<long>, std::vector<long> > tuple2vec;
 typedef	Tuple_3<std::vector<long>, std::vector<long>, std::vector<long> > tuple3vec;
 
+typedef	Tuple_2<std::list<long>, std::list<long> > tuple2lst;
+typedef	Tuple_3<std::list<long>, std::list<long>, std::list<long> > tuple3lst;
+
 class PmergeMe
 {
 	//	domain data.
@@ -82,7 +85,7 @@ class PmergeMe
 		static size_t	jacob_seq(size_t n);
 		static size_t	pow(size_t base, size_t exponent);
 
-	//	some methods for the implementation of the algorithm.
+	//	some methods for the implementation of the vector algorithm.
 	private:
 		//	splits the bector into the main chain and the pend chain and return at the end the position changes of this action.
 		tuple3vec	splitVector(std::vector<long>);
@@ -104,9 +107,6 @@ class PmergeMe
 		void	sortVectorContainer(void);
 		void	sortListContainer(void);
 
-		//	returns the time in microseconds.
-		size_t	testVectorSort(void);
-		size_t	testListSort(void);
 	public:
 
 		PmergeMe(void);

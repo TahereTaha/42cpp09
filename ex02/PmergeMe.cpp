@@ -467,8 +467,35 @@ void	PmergeMe::sortVectorContainer(void)
 		return ;
 	}
 	clock_t	end = clock();
-	std::cout << "Time to process a range of " << this->_sortedContainer.size() << " elements with std::vector : " << ((float) (end - start)) / (CLOCKS_PER_SEC / 1000000) << " us" << std::endl;
+	std::cout << "Time to process a range of " << this->_sortedContainer.size() << " elements with std::vector : " << ((float) (end - start)) / (CLOCKS_PER_SEC / 1000000) << " us, doing " << this->_vectorContainerComparisonCount << " comparisons." << std::endl;
 }
+
+////	returns 1 on correct and 0 on incorect.
+//static int	check_correct(const std::vector<long> &correct, const std::list<long> &test)
+//{
+//	size_t	i = 0;
+//	while (i < correct.size())
+//	{
+//		if (correct[i] != test[i])
+//			return (0);
+//		i++;
+//	}
+//	return (1);
+//}
+//
+//void	PmergeMe::sortVectorContainer(void)
+//{
+//	clock_t	start = clock();
+//	tuple2lst	result = sortVector(this->_vectorContainer);
+//	this->_listContainer = result._elem_1;
+//	if (!check_correct(this->_sortedContainer, this->_vectorContainer))
+//	{
+//		std::cout << "incorrect ordering." << std::endl;
+//		return ;
+//	}
+//	clock_t	end = clock();
+//	std::cout << "Time to process a range of " << this->_sortedContainer.size() << " elements with std::vector : " << ((float) (end - start)) / (CLOCKS_PER_SEC / 1000000) << " us" << std::endl;
+//}
 
 //	methods.
 
