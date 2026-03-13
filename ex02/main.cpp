@@ -6,10 +6,10 @@ int	main(int ac, char **av)
 {
 	if (ac < 2)
 	{
-		std::cerr << "Error" << std::endl;
+		std::cerr << "Error a" << std::endl;
 		return (42);
 	}
-
+	std::cout << "hola " << ac << " hola" << std::endl;
 	try
 	{
 		PmergeMe	merge_insertion(ac, av);

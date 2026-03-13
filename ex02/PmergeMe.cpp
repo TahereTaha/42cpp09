@@ -366,7 +366,11 @@ tuple2vec	PmergeMe::insertVectorPendToMainChain(std::vector<long> main_chain, \
 			}
 			//	update the pend_chain_order_index
 			{
-				size_t	i2 = inserted_elem_index;
+				size_t	i2 = 0;
+				while (i2 < pend_chain_order_index.size() && pend_chain_order_index[i2] < (long) target_insertion_index)
+				{
+					i2++;
+				}
 				while (i2 < pend_chain_order_index.size())
 				{
 					pend_chain_order_index[i2]++;
@@ -382,13 +386,10 @@ tuple2vec	PmergeMe::insertVectorPendToMainChain(std::vector<long> main_chain, \
 					new_change.push_back(change[i2]);
 					i2++;
 				}
-				{
-					long	original_index = inserted_elem_index * 2;
-					new_change.push_back(target_insertion_index - original_index);
-				}
+				new_change.push_back(inserted_elem_index * 2);
 				while (i2 < change.size())
 				{
-					new_change.push_back(change[i2] - 1);
+					new_change.push_back(change[i2]);
 					i2++;
 				}
 				change = new_change;
@@ -401,11 +402,12 @@ tuple2vec	PmergeMe::insertVectorPendToMainChain(std::vector<long> main_chain, \
 		}
 		std::cout << "\n\n" << std::endl;
 	}
+	//	transform change to the final form.
 	{
 		size_t	i = 0;
 		while (i < change.size())
 		{
-			change[i] = - change[i];
+			change[i] = change[i] - i;
 			i++;
 		}
 	}
