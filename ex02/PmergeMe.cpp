@@ -73,6 +73,31 @@ PmergeMe::PmergeMe(int ac, char **av)
 
 //	some helper functions.
 
+long &	list_access(std::list<long>& list, size_t index)
+{
+	std::list<long>::iterator current = list.begin();
+	size_t	i = 0;
+	while (i < index && current != list.end())
+	{
+		current++;
+		i++;
+	}
+	return (*current);
+}
+
+const long&	list_access(const std::list<long> &list, size_t index)
+{
+	std::list<long>::const_iterator current = list.begin();
+	size_t	i = 0;
+	while (i < index && current != list.end())
+	{
+		current++;
+		i++;
+	}
+	return (*current);
+}
+
+
 long	PmergeMe::stoul(std::string str)
 {
 	const char	*c_str = str.c_str();
@@ -133,6 +158,8 @@ size_t	PmergeMe::pow(size_t base, size_t exponent)
 }
 
 //	some methods for the implementation of the algorithm.
+
+//	vector.
 
 tuple3vec	PmergeMe::splitVector(std::vector<long> chain)
 {
@@ -441,6 +468,318 @@ tuple2vec	PmergeMe::sortVector(std::vector<long> chain)
 	return (return_val);
 }
 
+
+//	list.
+
+tuple3lst	PmergeMe::splitList(std::list<long> chain)
+{
+	//	pair the elements of the list 
+	//and push the bigest to the main chain and the smolest to the pend chain.
+	std::list<long>	main_chain;
+	std::list<long>	pend_chain;
+	std::list<long>	change;
+	size_t	i = 0;
+	while (i < chain.size() / 2)
+	{
+		this->_listContainerComparisonCount++;
+		if (list_access(chain, i * 2) < list_access(chain, i * 2  + 1))
+		{
+			pend_chain.push_back(list_access(chain, i * 2));
+			main_chain.push_back(list_access(chain, i * 2 + 1));
+			change.push_back(0);
+			change.push_back(0);
+		}
+		else
+		{
+			pend_chain.push_back(list_access(chain, i * 2 + 1));
+			main_chain.push_back(list_access(chain, i * 2));
+			change.push_back(1);
+			change.push_back(-1);
+		}
+		i++;
+	}
+	//	if there is a element left out of a pair it is apended to the pend chain at the end.
+	if (chain.size() % 2)
+	{
+		pend_chain.push_back(list_access(chain, i * 2));
+		change.push_back(0);
+	}
+
+	tuple3lst return_val;
+	return_val._elem_1 = main_chain;
+	return_val._elem_2 = pend_chain;
+	return_val._elem_3 = change;
+	return (return_val);
+}
+
+std::list<long>	PmergeMe::combineListChangeChains(std::list<long> change_1, \
+		std::list<long> change_2)
+{
+	//	apply the second change to the first one.
+	{
+		std::list<long> new_change_1;
+		size_t	i = 0;
+		while (i < change_1.size())
+		{
+			new_change_1.push_back(list_access(change_1, i + list_access(change_2, i)));
+			i++;
+		}
+		change_1 = new_change_1;
+	}
+	//	add together the changes.
+	std::list<long>	result;
+	size_t	i = 0;
+	while (i < change_1.size())
+	{
+		result.push_back(list_access(change_1, i) + list_access(change_2, i));
+		i++;
+	}
+	return (result);
+}
+
+tuple2lst	PmergeMe::sortListPendChain(std::list<long> pend_chain, std::list<long> change)
+{
+	std::list<long>	new_change;
+	std::list<long>	new_pend_chain;
+	size_t	i = 0;
+	while (i < change.size())
+	{
+		new_pend_chain.push_back(list_access(pend_chain, i + list_access(change, i)));
+		new_change.push_back(list_access(change, i) * 2);
+		new_change.push_back(list_access(change, i) * 2);
+		i++;
+	}
+	//	adding the last unpaird element.
+	if (pend_chain.size() > change.size())
+	{
+		new_pend_chain.push_back(list_access(pend_chain, i));
+		new_change.push_back(0);
+	}
+
+	tuple2lst return_val;
+	return_val._elem_1 = new_pend_chain;
+	return_val._elem_2 = new_change;
+	return (return_val);
+}
+
+size_t		PmergeMe::binarySearchListElementInChain(std::list<long> chain, long element)
+{
+	size_t	low = 0;
+	size_t	high = chain.size();
+	while (low != high)
+	{
+		size_t	span = high - low;
+		size_t	index = low + (span / 2);
+		this->_listContainerComparisonCount++;
+		long	comparison = element - list_access(chain, index);
+		if (comparison < 0)
+		{
+			high = index;
+		}
+		else if (comparison == 0)
+		{
+			return (index);
+		}
+		else
+		{
+			low = index + 1;
+		}
+	}
+	return (low);
+}
+
+tuple2lst	PmergeMe::insertListPendToMainChain(std::list<long> main_chain, \
+		std::list<long> pend_chain)
+{
+	std::list<long>	result_chain;
+	//	the index of the biger element on the end chain.
+	std::list<long>	pend_chain_order_index;
+
+	std::list<long>	change;
+
+	//	populate the pend_chain_order_index.
+	{
+		size_t	i = 0;
+		while (i < pend_chain.size())
+		{
+			pend_chain_order_index.push_back(i + 1);
+			i++;
+		}
+	}
+	//	populate the result_chain;
+	{
+		result_chain.push_back(list_access(pend_chain, 0));
+		size_t	i = 0;
+		while (i < main_chain.size())
+		{
+			result_chain.push_back(list_access(main_chain, i));
+			i++;
+		}
+	}
+	//	populate the change chain.
+	{
+		size_t	i = 0;
+		change.push_back(0);
+		while (i < main_chain.size())
+		{
+			change.push_back((i * 2) + 1);
+			i++;
+		}
+	}
+	
+
+	size_t	i = 2;
+	size_t	jacob_num = this->jacob_seq(i);
+	while (jacob_num < pend_chain.size())
+	{
+		i++;
+		jacob_num = this->jacob_seq(i);
+		size_t	inserted_elem_index = std::min(jacob_num, pend_chain.size()) - 1;
+		while (inserted_elem_index >= this->jacob_seq(i - 1))
+		{
+			std::list<long>	search_chain;
+			//	fill the search chain.
+			if (inserted_elem_index == pend_chain.size() - 1)
+			{
+				search_chain = result_chain;
+			}
+			else
+			{
+				long	i2 = 0;
+				while (i2 < list_access(pend_chain_order_index, inserted_elem_index))
+				{
+					search_chain.push_back(list_access(result_chain, i2));
+					i2++;
+				}
+			}
+			size_t	target_insertion_index = this->binarySearchListElementInChain(search_chain, list_access(pend_chain, inserted_elem_index));
+			//	insert the element on the result_chain.
+			{
+				std::list<long>	new_result_chain;
+				size_t	i2 = 0;
+				while (i2 < target_insertion_index)
+				{
+					new_result_chain.push_back(list_access(result_chain, i2));
+					i2++;
+				}
+				new_result_chain.push_back(list_access(pend_chain, inserted_elem_index));
+				while (i2 < result_chain.size())
+				{
+					new_result_chain.push_back(list_access(result_chain, i2));
+					i2++;
+				}
+				result_chain = new_result_chain;
+			}
+			//	update the pend_chain_order_index
+			{
+				size_t	i2 = 0;
+				while (i2 < pend_chain_order_index.size() && list_access(pend_chain_order_index, i2) < (long) target_insertion_index)
+				{
+					i2++;
+				}
+				while (i2 < pend_chain_order_index.size())
+				{
+					list_access(pend_chain_order_index, i2)++;
+					i2++;
+				}
+			}
+			//	update the change_chain.
+			{
+				std::list<long>	new_change;
+				size_t	i2 = 0;
+				while (i2 < target_insertion_index &&  i2 < change.size())
+				{
+					new_change.push_back(list_access(change, i2));
+					i2++;
+				}
+				new_change.push_back(inserted_elem_index * 2);
+				while (i2 < change.size())
+				{
+					new_change.push_back(list_access(change, i2));
+					i2++;
+				}
+				change = new_change;
+			}
+			inserted_elem_index--;
+		}
+	}
+	//	transform change to the final form.
+	{
+		size_t	i = 0;
+		while (i < change.size())
+		{
+			list_access(change, i) = list_access(change, i) - i;
+			i++;
+		}
+	}
+	tuple2lst	return_val;
+	return_val._elem_1 = result_chain;
+	return_val._elem_2 = change;
+	return (return_val);
+}
+
+tuple2lst	PmergeMe::sortList(std::list<long> chain)
+{
+	std::list<long>	change;
+	std::list<long>	main_chain;
+	std::list<long>	pend_chain;
+
+	if (chain.size() == 1)
+	{
+		change.push_back(0);
+		tuple2lst return_val;
+		return_val._elem_1 = chain;
+		return_val._elem_2 = change;
+		return (return_val);
+	}
+
+	//	split both chains.
+	{
+		tuple3lst	return_val = this->splitList(chain);
+		main_chain = return_val._elem_1;
+		pend_chain = return_val._elem_2;
+		change = return_val._elem_3;
+	}
+
+	//	sort the main chain and adjust the pend chain.
+	{
+		std::list<long>	sub_change;
+		//	recurse untill main chain is sorted.
+		{
+			tuple2lst	return_val = this->sortList(main_chain);
+			main_chain = return_val._elem_1;
+			sub_change = return_val._elem_2;
+		}
+		//	sort the pend chain and build the new change chain.
+		{
+			std::list<long>	new_change;
+			tuple2lst	return_val = this->sortListPendChain(pend_chain, sub_change);
+			pend_chain = return_val._elem_1;
+			new_change = return_val._elem_2;
+
+			change = this->combineListChangeChains(change, new_change);
+		}
+	}
+
+	//	insert from the pend chain to the main chain.
+	{
+		std::list<long>	new_change;
+		tuple2lst	return_val = this->insertListPendToMainChain(main_chain, pend_chain);
+		chain = return_val._elem_1;
+		new_change = return_val._elem_2;
+		change = this->combineListChangeChains(change, new_change);
+		//pend_chain = return_val._elem_1;
+		//change = return_val._elem_2;
+	}
+
+	tuple2lst	return_val;
+	return_val._elem_1 = chain;
+	return_val._elem_2 = change;
+	return (return_val);
+}
+
+
+
 //	internal methods.
 
 //	returns 1 on correct and 0 on incorect.
@@ -456,6 +795,20 @@ static int	check_correct(const std::vector<long> &correct, const std::vector<lon
 	return (1);
 }
 
+static int	check_correct(const std::vector<long> &correct, const std::list<long> &test)
+{
+	size_t	i = 0;
+	while (i < correct.size())
+	{
+		if (correct[i] != list_access(test, i))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+
+
 void	PmergeMe::sortVectorContainer(void)
 {
 	clock_t	start = clock();
@@ -470,32 +823,20 @@ void	PmergeMe::sortVectorContainer(void)
 	std::cout << "Time to process a range of " << this->_sortedContainer.size() << " elements with std::vector : " << ((float) (end - start)) / (CLOCKS_PER_SEC / 1000000) << " us, doing " << this->_vectorContainerComparisonCount << " comparisons." << std::endl;
 }
 
-////	returns 1 on correct and 0 on incorect.
-//static int	check_correct(const std::vector<long> &correct, const std::list<long> &test)
-//{
-//	size_t	i = 0;
-//	while (i < correct.size())
-//	{
-//		if (correct[i] != test[i])
-//			return (0);
-//		i++;
-//	}
-//	return (1);
-//}
-//
-//void	PmergeMe::sortVectorContainer(void)
-//{
-//	clock_t	start = clock();
-//	tuple2lst	result = sortVector(this->_vectorContainer);
-//	this->_listContainer = result._elem_1;
-//	if (!check_correct(this->_sortedContainer, this->_vectorContainer))
-//	{
-//		std::cout << "incorrect ordering." << std::endl;
-//		return ;
-//	}
-//	clock_t	end = clock();
-//	std::cout << "Time to process a range of " << this->_sortedContainer.size() << " elements with std::vector : " << ((float) (end - start)) / (CLOCKS_PER_SEC / 1000000) << " us" << std::endl;
-//}
+void	PmergeMe::sortListContainer(void)
+{
+	clock_t	start = clock();
+	tuple2lst	result = sortList(this->_listContainer);
+	this->_listContainer = result._elem_1;
+	if (!check_correct(this->_sortedContainer, this->_listContainer))
+	{
+		std::cout << "incorrect ordering." << std::endl;
+		return ;
+	}
+	clock_t	end = clock();
+	std::cout << "Time to process a range of " << this->_sortedContainer.size() << " elements with std::list : " << ((float) (end - start)) / (CLOCKS_PER_SEC / 1000000) << " us, doing " << this->_listContainerComparisonCount << " comparisons." << std::endl;
+}
+
 
 //	methods.
 
@@ -505,9 +846,12 @@ void	PmergeMe::run(void)
 //	std::cout << "after:\t" << this->_sortedContainer << std::endl;
 	
 	this->sortVectorContainer();
-//	this->sortListContainer();
+	this->sortListContainer();
 }
 
+
+//	formula for evaluating the number of comparisons.
+//	evaluate n⌈log2​(3n/4​)⌉−⌊(2^⌊log2​(6n)⌋)/3​⌋+⌊log2​(6n)/2​⌋ at 10
 
 
 

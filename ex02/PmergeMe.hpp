@@ -5,6 +5,13 @@
 #include <list>
 #include <iostream>
 
+// some simple function to acces element in a list of long.
+
+long &	list_access(std::list<long>& list, size_t index);
+
+const long&	list_access(const std::list<long> &list, size_t index);
+
+
 //	a simple tuple class for only 2 elements.
 template <typename T1, typename T2>
 class Tuple_2
@@ -87,7 +94,7 @@ class PmergeMe
 
 	//	some methods for the implementation of the vector algorithm.
 	private:
-		//	splits the bector into the main chain and the pend chain and return at the end the position changes of this action.
+		//	splits the vector into the main chain and the pend chain and return at the end the position changes of this action.
 		tuple3vec	splitVector(std::vector<long>);
 		//	it will append one change after the other.
 		std::vector<long>	combineVectorChangeChains(std::vector<long> change_1, \
@@ -100,6 +107,22 @@ class PmergeMe
 				std::vector<long> pend_chain);
 		//	it returns the vector sorted and the change that each element has had.
 		tuple2vec	sortVector(std::vector<long>);
+
+	//	some methods for the implementation of the list algorithm.
+	private:
+		//	splits the list into the main chain and the pend chain and return at the end the position changes of this action.
+		tuple3lst	splitList(std::list<long>);
+		//	it will append one change after the other.
+		std::list<long>	combineListChangeChains(std::list<long> change_1, \
+				std::list<long> change_2);
+		//	it will return the sorted pend chain with a change chain for both main and pend chains.
+		tuple2lst	sortListPendChain(std::list<long> pend_chain, std::list<long> change);
+		size_t		binarySearchListElementInChain(std::list<long> chain, long element);
+		//	it will return the sorted chain with the change.
+		tuple2lst	insertListPendToMainChain(std::list<long> main_chain, \
+				std::list<long> pend_chain);
+		//	it returns the list sorted and the change that each element has had.
+		tuple2lst	sortList(std::list<long>);
 
 
 	//	some internal methods.
