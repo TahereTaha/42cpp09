@@ -13,6 +13,8 @@
 #include <cstdlib>
 #include <cmath>
 
+int	debug = 0;
+
 //	canonical orthodox form.
 BitcoinExchange::BitcoinExchange(void)
 {
@@ -220,6 +222,58 @@ double	BitcoinExchange::stod(std::string str)
 	return (val);
 }
 
+static int	check_correct_month(long month)
+{
+	if (month > 12)
+		return (0);
+	if (month < 1)
+		return (0);
+	return (1);
+}
+
+static int	is_leap_year(long year)
+{
+	int	div_by_4 = year % 4 == 0;
+	int	div_by_100 = year % 100 == 0;
+	int	div_by_400 = year % 400 == 0;
+	if (div_by_400)
+		return (1);
+	if (div_by_100)
+		return (0);
+	if (div_by_4)
+		return (1);
+	return (0);
+}
+
+static int	check_correct_day(long year, long month, long day)
+{
+	if (day < 1)
+		return (0);
+	if (day > 31)
+		return (0);
+	
+	//	april
+	if (month == 4 && day > 30)
+		return (0);
+	//	june
+	if (month == 6 && day > 30)
+		return (0);
+	//	september
+	if (month == 9 && day > 30)
+		return (0);
+	//	november
+	if (month == 11 && day > 30)
+		return (0);
+	
+	//	February
+	if (month == 2 && day > 29)
+		return (0);
+	if (!is_leap_year(year) && month == 2 && day > 28)
+		return (0);
+
+	return (1);
+}
+
 //on error will throw an exeption.
 time_t	BitcoinExchange::stodate(std::string str)
 {
@@ -253,9 +307,25 @@ time_t	BitcoinExchange::stodate(std::string str)
 	time_info->tm_hour = 0;
 	try
 	{
-		time_info->tm_mday = BitcoinExchange::stol(day_str);
-		time_info->tm_mon = BitcoinExchange::stol(month_str) - 1;
-		time_info->tm_year = BitcoinExchange::stol(year_str) - 1900;
+		long	day_num = BitcoinExchange::stol(day_str);
+		long	month_num = BitcoinExchange::stol(month_str);
+		long	year_num = BitcoinExchange::stol(year_str);
+
+	
+		if (year_num > INT_MAX)
+			throw (std::invalid_argument("int overflow."));
+
+		if (!check_correct_month(month_num))
+			throw (std::invalid_argument("incorrect month."));
+		if (!check_correct_day(year_num, month_num, day_num))
+			throw (std::invalid_argument("incorrect day."));
+		
+
+		time_info->tm_mday = day_num + 1;
+		time_info->tm_mon = month_num - 1;
+		if (year_num < 1900)
+			throw (std::invalid_argument("can't handel dates before 1900"));
+		time_info->tm_year = year_num - 1900;
 	}
 	catch (std::exception &e)
 	{
